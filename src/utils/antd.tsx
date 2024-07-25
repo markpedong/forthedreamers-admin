@@ -5,7 +5,7 @@ import React, { MutableRefObject } from 'react'
 import enUS from 'antd/locale/en_US'
 import { ActionType, ProFormInstance } from '@ant-design/pro-components'
 import { ApiResponse } from '@/api/http'
-import { FileType } from '@/api'
+import { FileType } from '@/constants/types'
 
 export const afterModalformFinish = (
 	actionRef?: MutableRefObject<ActionType | undefined>,

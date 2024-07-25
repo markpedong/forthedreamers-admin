@@ -1,4 +1,5 @@
-import { post } from '@/api/http'
+import { post, upload } from '@/api/http'
+import { TUploadImage } from '@/constants/types'
 
 // /public/login
 export type TLoginDetails = {
@@ -6,3 +7,5 @@ export type TLoginDetails = {
 }
 
 export const login = params => post<TLoginDetails>('/public/login', params)
+
+export const uploadImage = params => upload<TUploadImage>('/api/uploadImage', params)
