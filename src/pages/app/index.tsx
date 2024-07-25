@@ -51,11 +51,11 @@ const App: FC = () => {
 			fixSiderbar
 			fixedHeader
 			layout="mix"
-			headerTitleRender={(props) => <>{props}</>}
+			headerTitleRender={props => <>{props}</>}
 			logo={
 				<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 					<img src={darkMode ? logoDark : logo} />
-					<h1>M</h1>
+					<h1>For the Dreamers</h1>
 				</div>
 			}
 			route={{ routes: cloneDeep(menus) }}

@@ -25,8 +25,8 @@ const Login = () => {
 			<LoginFormPage
 				backgroundVideoUrl="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
 				//@ts-ignore
-				title={<span style={{ color: 'white' }}>M</span>}
-				subTitle={<span style={{ color: 'white' }}>Access CMS System for Portfolio Website</span>}
+				title={<span style={{ color: 'white' }}>For the Dreamers</span>}
+				subTitle={<span style={{ color: 'white' }}>Access CMS for For the Dreamers</span>}
 				containerStyle={{
 					backgroundColor: 'rgba(0, 0, 0,0.65)',
 					backdropFilter: 'blur(4px)'
@@ -82,7 +82,7 @@ const Login = () => {
 					rules={[
 						{
 							required: true,
-							message: '请输入密码！'
+							message: 'Password is required'
 						}
 					]}
 				/>
