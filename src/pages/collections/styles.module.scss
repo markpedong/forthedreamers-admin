@@ -1,0 +1,20 @@
+@import "@/styles/_helpers.scss";
+
+.galleryContainer {
+    @apply flex items-center justify-start;
+}
+
+.imgContainer {
+    @apply flex gap-3;
+
+    :global {
+        .ant-image {
+            height: 4rem;
+            width: 4rem;
+
+            img {
+                border-radius: 0.3rem;
+            }
+        }
+    }
+}

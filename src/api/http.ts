@@ -46,7 +46,7 @@ const upload = async <T>(url: string, data): Promise<ApiResponse<{ data: T }>> =
 	return response
 }
 
-const post = async <T>(url: string, data = {}): Promise<ApiResponse<T>> =>
+const post = async <T>(url: string, data = {}): Promise<ApiResponse<{ data: T }>> =>
 	instance.post(`${import.meta.env.VITE_DOMAIN}${url}`, data, {
 		headers: {
 			'Content-Type': 'application/json',

@@ -32,7 +32,7 @@ const initialState: InitialSlice = {
 }
 
 export const UserSlice = createSlice({
-	name: 'Boolean',
+	name: 'User',
 	initialState,
 	reducers: {
 		resetUserData: () => initialState,
