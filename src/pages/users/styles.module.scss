@@ -1,0 +1,12 @@
+.imgContainer {
+    :global {
+        .ant-image {
+            height: 4rem;
+            width: 4rem;
+
+            img {
+                border-radius: 0.3rem;
+            }
+        }
+    }
+}
