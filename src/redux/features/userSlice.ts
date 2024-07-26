@@ -1,34 +1,23 @@
+import { UserInfo } from '@/constants/response-type'
 import { createSlice } from '@reduxjs/toolkit'
 
-type InitialSlice = {
-	userData: {
-		id: string
-		created_at: string
-		updated_at: string
-		password: string
-		email: string
-		first_name: string
-		birthday: string
-		username: string
-	}
-	type: number
+type InitialSlice = UserInfo & {
 	token: string
-	isLoggedIn: boolean
 }
+
 const initialState: InitialSlice = {
-	userData: {
-		id: '',
-		created_at: '',
-		updated_at: '',
-		password: '',
-		email: '',
-		first_name: '',
-		birthday: '',
-		username: ''
-	},
-	type: 0,
-	token: '',
-	isLoggedIn: false
+	id: '',
+	created_at: 0,
+	updated_at: 0,
+	password: '',
+	email: '',
+	first_name: '',
+	username: '',
+	address: '',
+	image: '',
+	last_name: '',
+	phone: '',
+	token: ''
 }
 
 export const UserSlice = createSlice({
@@ -36,11 +25,10 @@ export const UserSlice = createSlice({
 	initialState,
 	reducers: {
 		resetUserData: () => initialState,
-		setType: (state, action) => ({ ...state, type: action.payload }),
-		setUserData: (state, action) => ({ ...state, isLoggedIn: true, userData: action.payload }),
+		setUserInfo: (state, action) => ({ ...state, userData: action.payload }),
 		setUserToken: (state, action) => ({ ...state, token: action.payload })
 	}
 })
 
-export const { setUserData, resetUserData, setUserToken, setType } = UserSlice.actions
+export const { setUserInfo, resetUserData, setUserToken } = UserSlice.actions
 export default UserSlice.reducer

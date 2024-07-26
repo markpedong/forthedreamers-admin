@@ -1,8 +1,7 @@
 import { login } from '@/api'
-import { setUserToken } from '@/redux/features/userSlice'
+import { setUserInfo, setUserToken } from '@/redux/features/userSlice'
 import { useAppDispatch } from '@/redux/store'
 import { afterModalformFinish } from '@/utils/antd'
-import { setLocalStorage } from '@/utils/xLocalstorage'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { LoginFormPage, ProFormInstance, ProFormText } from '@ant-design/pro-components'
 import { theme } from 'antd'
@@ -34,9 +33,8 @@ const Login = () => {
 				formRef={formRef}
 				onFinish={async params => {
 					const res = await login(params)
-
 					if (res?.data.success) {
-						setLocalStorage('token', res?.data?.data.token)
+						await dispatch(setUserInfo(res?.data?.data.userInfo))
 						await dispatch(setUserToken(res?.data?.data.token))
 						formRef?.current?.resetFields()
 						navigate('/app')

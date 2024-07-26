@@ -2,13 +2,13 @@ import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/redux/store'
 import { resetUserData } from '@/redux/features/userSlice'
 import { useNavigate } from 'react-router-dom'
-import { getLocalStorage } from '@/utils/xLocalstorage'
 
 export default function isAuth(Component: any) {
 	const dispatch = useAppDispatch()
 	const navigate = useNavigate()
-	const user = useAppSelector(state => state.userData)
-	const auth = user?.isLoggedIn || !!getLocalStorage('token')
+	const id = useAppSelector(state => state.userData?.id)
+	const token = useAppSelector(state => state.userData?.token)
+	const auth = id && token
 
 	useEffect(() => {
 		if (!auth) {
