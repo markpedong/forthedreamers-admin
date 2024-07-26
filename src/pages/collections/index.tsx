@@ -11,9 +11,12 @@ import {
 	ProFormUploadButton,
 	ProTable
 } from '@ant-design/pro-components'
-import { Button, Image, message, Space, Spin, Typography, UploadFile } from 'antd'
+import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
 import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
+import { RcFile } from 'antd/lib/upload'
+import { omit } from 'lodash'
+import { validateImg } from '@/constants/helper'
 
 const Collections = () => {
 	const [uploadedImages, setUploadedImages] = useState<{ url: string }[]>([])
@@ -72,7 +75,7 @@ const Collections = () => {
 				{...MODAL_FORM_PROPS}
 				labelCol={{ flex: '65px' }}
 				initialValues={isEdit ? record : {}}
-				title={isEdit ? 'Edit Blogs' : 'Add Blogs'}
+				title={isEdit ? 'Edit Collection' : 'Add Collection'}
 				trigger={
 					isEdit ? (
 						<Typography.Link
@@ -88,18 +91,20 @@ const Collections = () => {
 				}
 				onFinish={async params => {
 					let res
+					const payload = omit({ ...params, images: uploadedImages?.map(img => img?.url) }, ['upload'])
 
 					if (isEdit) {
-						res = await updateCollection({ ...params, image: uploadedImages, id: record?.id })
+						res = await updateCollection({ ...payload, id: record?.id })
 					} else {
-						res = await addCollection({ ...params, image: uploadedImages })
+						res = await addCollection({ ...payload })
 						setUploadedImages([])
 					}
 
 					return afterModalformFinish(actionRef, res)
 				}}
+				onOpenChange={visible => !visible && setUploadedImages([])}
 			>
-				<ProFormText label="Title" name="title" rules={[{ required: true }]} />
+				<ProFormText label="Name" name="name" rules={[{ required: true }]} />
 				<ProFormText label="Images" rules={[{ required: true }]}>
 					<div className={styles.galleryContainer}>
 						{uploading ? (
@@ -117,20 +122,8 @@ const Collections = () => {
 										setUploadedImages(s => s.filter(q => q?.url !== e?.url))
 									},
 									fileList: uploadedImages as UploadFile<any>[],
-									//@ts-ignore
-									action: async e => {
-										const isJpgOrPng = e.type === 'image/jpeg' || e.type === 'image/png'
-										const isLt10M = e.size / 1024 / 1024 < 10
-
-										if (!isJpgOrPng) {
-											message.error('You can only upload JPG/PNG file!')
-											return
-										}
-
-										if (!isLt10M) {
-											message.error('Image must be smaller than 10MB!')
-											return
-										}
+									action: async (e: RcFile) => {
+										if (validateImg(e) === '') return ''
 
 										setUploading(true)
 										if (!!!record?.images.length) {
@@ -141,7 +134,7 @@ const Collections = () => {
 											const res = await uploadImage(e)
 											setUploadedImages(state => [...state, { url: res.data?.data.url }])
 
-											return ''
+											return res.data?.data.url || ''
 										} finally {
 											setUploading(false)
 										}

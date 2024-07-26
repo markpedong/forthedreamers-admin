@@ -10,10 +10,11 @@ import {
 	ProFormUploadButton,
 	ProTable
 } from '@ant-design/pro-components'
-import { Button, Image, message, Space, Spin, Typography, UploadFile } from 'antd'
+import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
 import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
-import { addProduct, getProduct, updateProduct, uploadImage } from '@/api'
+import { addProduct, getProducts, updateProduct, uploadImage } from '@/api'
+import { validateImg } from '@/constants/helper'
 
 const Products = () => {
 	const [uploadedImages, setUploadedImages] = useState<{ url: string }[]>([])
@@ -72,7 +73,7 @@ const Products = () => {
 				{...MODAL_FORM_PROPS}
 				labelCol={{ flex: '65px' }}
 				initialValues={isEdit ? record : {}}
-				title={isEdit ? 'Edit Blogs' : 'Add Blogs'}
+				title={isEdit ? 'Edit Product' : 'Add Product'}
 				trigger={
 					isEdit ? (
 						<Typography.Link
@@ -119,18 +120,7 @@ const Products = () => {
 									fileList: uploadedImages as UploadFile<any>[],
 									//@ts-ignore
 									action: async e => {
-										const isJpgOrPng = e.type === 'image/jpeg' || e.type === 'image/png'
-										const isLt10M = e.size / 1024 / 1024 < 10
-
-										if (!isJpgOrPng) {
-											message.error('You can only upload JPG/PNG file!')
-											return
-										}
-
-										if (!isLt10M) {
-											message.error('Image must be smaller than 10MB!')
-											return
-										}
+										if (validateImg(e) === '') return ''
 
 										setUploading(true)
 										if (!!!record?.images.length) {
@@ -156,7 +146,7 @@ const Products = () => {
 	}
 
 	const fetchData = async () => {
-		const res = await getProduct({})
+		const res = await getProducts({})
 
 		return {
 			data: res?.data.data ?? []

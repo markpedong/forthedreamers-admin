@@ -18,7 +18,7 @@ export const addCollection = params => post('/collections/add', params)
 export const updateCollection = params => post('/collections/update', params)
 
 // /users/get
-export const getUser = params => post<TUserItem[]>('/users/get', params)
+export const getUsers = params => post<TUserItem[]>('/users/get', params)
 
 // /users/add
 export const addUser = params => post('/users/add', params)
@@ -26,11 +26,11 @@ export const addUser = params => post('/users/add', params)
 // /users/update
 export const updateUser = params => post('/users/update', params)
 
-// /product/get
-export const getProduct = params => post<TProductItem[]>('/product/get', params)
+// /products/get
+export const getProducts = params => post<TProductItem[]>('/products/get', params)
 
-// /product/add
-export const addProduct = params => post('/product/add', params)
+// /products/add
+export const addProduct = params => post('/products/add', params)
 
-// /product/update
-export const updateProduct = params => post('/product/update', params)
+// /products/update
+export const updateProduct = params => post('/products/update', params)

@@ -1,15 +1,28 @@
-import { addUser, getUser, updateUser } from '@/api'
+import { addUser, getUsers, updateUser, uploadImage } from '@/api'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
 import { TUserItem } from '@/constants/response-type'
 import { dateTimeFormatter } from '@/utils'
 import { afterModalformFinish } from '@/utils/antd'
-import { ActionType, ModalForm, ProColumns, ProFormText, ProTable } from '@ant-design/pro-components'
-import { Button, Image, Space, Typography } from 'antd'
-import { useRef } from 'react'
+import {
+	ActionType,
+	ModalForm,
+	ProColumns,
+	ProFormText,
+	ProFormTextArea,
+	ProFormUploadButton,
+	ProTable
+} from '@ant-design/pro-components'
+import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
+import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
+import { RcFile } from 'antd/es/upload'
+import { validateImg } from '@/constants/helper'
 
 const Users = () => {
+	const [uploadedImg, setUploadedImg] = useState('')
+	const [uploading, setUploading] = useState(false)
 	const actionRef = useRef<ActionType>()
+
 	const columns: ProColumns<TUserItem>[] = [
 		{
 			title: 'Image',
@@ -44,6 +57,7 @@ const Users = () => {
 			),
 			align: 'center',
 			search: false,
+			width: 100,
 			render: (_, record) => (
 				<div className="flex flex-col">
 					<div>{record?.first_name}</div>
@@ -105,29 +119,91 @@ const Users = () => {
 		return (
 			<ModalForm
 				{...MODAL_FORM_PROPS}
-				labelCol={{ flex: '65px' }}
+				width={1000}
+				labelCol={{ flex: '100px' }}
 				initialValues={isEdit ? record : {}}
-				title={isEdit ? 'Edit Blogs' : 'Add Blogs'}
-				trigger={isEdit ? <Typography.Link>Edit</Typography.Link> : <Button type="primary">ADD</Button>}
+				title={isEdit ? 'Edit User' : 'Add User'}
+				grid
+				trigger={
+					isEdit ? (
+						<Typography.Link onClick={() => setUploadedImg(record?.image!)}>Edit</Typography.Link>
+					) : (
+						<Button type="primary">ADD</Button>
+					)
+				}
 				onFinish={async params => {
 					let res
 
 					if (isEdit) {
-						res = await updateUser({ ...params, id: record?.id })
+						res = await updateUser({ ...params, image: uploadedImg, id: record?.id })
 					} else {
-						res = await addUser({ ...params })
+						res = await addUser({ ...params, image: uploadedImg })
 					}
 
 					return afterModalformFinish(actionRef, res)
 				}}
+				onOpenChange={visible => !visible && setUploadedImg('')}
 			>
-				<ProFormText label="Title" name="title" rules={[{ required: true }]} />
+				<ProFormText
+					colProps={{ span: 12 }}
+					label="First Name"
+					name="first_name"
+					rules={[{ required: true }]}
+				/>
+				<ProFormText colProps={{ span: 12 }} label="Last Name" name="last_name" rules={[{ required: true }]} />
+				<ProFormText colProps={{ span: 12 }} label="Phone" name="phone" rules={[{ required: true }]} />
+				<ProFormText colProps={{ span: 12 }} label="Email" name="email" rules={[{ required: true }]} />
+				<ProFormText colProps={{ span: 12 }} label="Username" name="username" rules={[{ required: true }]} />
+				<ProFormText.Password
+					colProps={{ span: 12 }}
+					label="Password"
+					name="password"
+					rules={[{ required: true }]}
+				/>
+				<ProFormTextArea colProps={{ span: 12 }} label="Address" name="address" rules={[{ required: true }]} />
+				<ProFormText colProps={{ span: 12 }} label="Image" rules={[{ required: true }]}>
+					<div>
+						{uploading ? (
+							<Spin />
+						) : (
+							<ProFormUploadButton
+								name="upload"
+								title="UPLOAD YOUR IMAGE"
+								fieldProps={{
+									name: 'files',
+									listType: 'picture-card',
+									accept: 'image/*',
+									multiple: false,
+									onRemove: () => setUploadedImg(''),
+									fileList: uploadedImg ? ([{ url: uploadedImg }] as UploadFile<any>[]) : [],
+									action: async (e: RcFile) => {
+										if (validateImg(e) === '') return ''
+
+										setUploading(true)
+										if (!record?.image) {
+											setUploadedImg('')
+										}
+
+										try {
+											const res = await uploadImage(e)
+											setUploadedImg(res.data?.data.url)
+
+											return res.data?.data.url || ''
+										} finally {
+											setUploading(false)
+										}
+									}
+								}}
+							/>
+						)}
+					</div>
+				</ProFormText>
 			</ModalForm>
 		)
 	}
 
 	const fetchData = async () => {
-		const res = await getUser({})
+		const res = await getUsers({})
 
 		return {
 			data: res?.data.data ?? []
@@ -143,7 +219,7 @@ const Users = () => {
 				actionRef={actionRef}
 				request={fetchData}
 				toolBarRender={() => [renderAddUsers('ADD')]}
-				scroll={{ x: 700 }}
+				scroll={{ x: 1000 }}
 			/>
 		</div>
 	)
