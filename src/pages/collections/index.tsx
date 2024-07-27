@@ -33,7 +33,11 @@ const Collections = () => {
 			align: 'center',
 			search: false,
 			render: (_, record) => {
-				return <div className={styles.imgContainer}>{record?.images.map(img => <Image src={img} />)}</div>
+				return (
+					<div className={styles.imgContainer}>
+						{record?.images.map(img => <Image key={img} src={img} />)}
+					</div>
+				)
 			}
 		},
 		{

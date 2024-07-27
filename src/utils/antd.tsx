@@ -49,7 +49,7 @@ export const AntdConfigProvider = ({ children }: { children: React.ReactNode }) 
 			locale={enUS}
 			theme={{
 				algorithm: darkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-				token: { colorPrimary: 'red', fontFamily: 'Poppins' }
+				token: { colorPrimary: '#16c784', fontFamily: 'Inter' }
 			}}
 		>
 			{children}
