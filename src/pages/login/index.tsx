@@ -9,7 +9,7 @@ import { theme } from 'antd'
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './styles.module.scss'
-
+import { motion } from 'framer-motion'
 const Login = () => {
 	const navigate = useNavigate()
 	const dispatch = useAppDispatch()
@@ -43,6 +43,18 @@ const Login = () => {
 					}
 
 					return afterModalformFinish(undefined, res, formRef)
+				}}
+				submitter={{
+					render: props => {
+						return (
+							<div className={styles.submitBtnContainer}>
+								<motion.div onClick={() => props.submit()} whileTap={{ scale: 0.98 }}>
+									Login
+								</motion.div>
+								<div>v {import.meta.env.PACKAGE_VERSION}</div>
+							</div>
+						)
+					}
 				}}
 			>
 				<ProFormText

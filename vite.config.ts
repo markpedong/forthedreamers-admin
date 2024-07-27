@@ -3,12 +3,16 @@ import path from 'path'
 import { defineConfig } from 'vite'
 import sassDts from 'vite-plugin-sass-dts'
 import tsConfigPaths from 'vite-tsconfig-paths'
+import packageJson from './package.json'
 
 // https://vitejs.dev/config
 export default defineConfig({
-	base: "/",
+	base: '/',
 	server: {
-		port: 6602,
+		port: 6602
+	},
+	define: {
+		'import.meta.env.PACKAGE_VERSION': JSON.stringify(packageJson.version)
 	},
 	plugins: [react(), sassDts(), tsConfigPaths()],
 	resolve: {

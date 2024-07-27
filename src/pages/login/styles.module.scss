@@ -5,3 +5,15 @@
         }
     }
 }
+
+.submitBtnContainer {
+    @apply flex flex-col w-full;
+
+    div:first-child {
+        @apply bg-red-500 h-10 flex items-center justify-center text-white font-bold tracking-widest rounded-md select-none;
+    }
+
+    div:last-child {
+        @apply text-white text-center mt-4;
+    }
+}

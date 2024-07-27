@@ -1,7 +1,7 @@
 {
 	"name": "admin",
 	"private": true,
-	"version": "1.0.0",
+	"version": "7.27.1",
 	"type": "module",
 	"scripts": {
 		"dev": "rimraf dist && vite",
@@ -16,6 +16,7 @@
 		"@types/lodash": "4.17.0",
 		"antd": "5.16.1",
 		"axios": "1.6.8",
+		"framer-motion": "^11.3.18",
 		"lodash": "4.17.21",
 		"lz-string": "1.5.0",
 		"numeral": "2.0.6",
