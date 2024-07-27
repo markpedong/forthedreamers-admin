@@ -39,7 +39,7 @@ const Login = () => {
 						setLocalStorage('token', res?.data.data.token)
 						await dispatch(setUserInfo(res?.data?.data))
 						formRef?.current?.resetFields()
-						navigate('/app')
+						navigate('/app/users')
 					}
 
 					return afterModalformFinish(undefined, res, formRef)
