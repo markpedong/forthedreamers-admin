@@ -6,15 +6,20 @@ import {
 	ActionType,
 	ModalForm,
 	ProColumns,
+	ProFormDigit,
+	ProFormSelect,
 	ProFormText,
+	ProFormTextArea,
 	ProFormUploadButton,
 	ProTable
 } from '@ant-design/pro-components'
 import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
 import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
-import { addProduct, getProducts, updateProduct, uploadImage } from '@/api'
+import { addProduct, getCollections, getProducts, updateProduct, uploadImage } from '@/api'
 import { validateImg } from '@/constants/helper'
+import { omit } from 'lodash'
+import { RcFile } from 'antd/lib/upload'
 
 const Products = () => {
 	const [uploadedImages, setUploadedImages] = useState<{ url: string }[]>([])
@@ -22,9 +27,52 @@ const Products = () => {
 	const actionRef = useRef<ActionType>()
 	const columns: ProColumns<TProductItem>[] = [
 		{
+			title: 'Collection',
+			align: 'center',
+			dataIndex: 'collection_id'
+		},
+		{
 			title: 'Name',
 			align: 'center',
 			dataIndex: 'name'
+		},
+		{
+			title: 'Description',
+			align: 'center',
+			dataIndex: 'description'
+		},
+		{
+			title: (
+				<div className="flex flex-col gap-0">
+					<div>Price</div>
+					<div>Quantity</div>
+				</div>
+			),
+			search: false,
+			align: 'center',
+			width: 160,
+			render: (_, record) => (
+				<div className="flex flex-col">
+					<div>{record?.price}</div>
+					<div>{record?.quantity}</div>
+				</div>
+			)
+		},
+		{
+			title: 'Sizes',
+			align: 'center',
+			search: false,
+			render: (_, record) => {
+				return <div className={styles.sizeContainer}>{record?.sizes.map(size => <span>{size}</span>)}</div>
+			}
+		},
+		{
+			title: 'Color',
+			align: 'center',
+			search: false,
+			render: (_, record) => {
+				return <div className={styles.colorContainer}>{record?.colors.map(color => <span>{color}</span>)}</div>
+			}
 		},
 		{
 			title: 'Images',
@@ -66,14 +114,40 @@ const Products = () => {
 		}
 	]
 
+	const getCollectionsData = async () => {
+		const res = await getCollections({})
+		const options = res?.data.data.map(option => ({
+			label: option?.name,
+			value: option?.id
+		}))
+
+		return options ?? []
+	}
+
+	const handleCustomRequest = async (e: any) => {
+		const file = e.file as RcFile
+
+		if (validateImg(file) === '') return
+
+		setUploading(true)
+
+		try {
+			const res = await uploadImage(file)
+			setUploadedImages(state => [...state, { ...file, url: res.data.data.url }])
+		} finally {
+			setUploading(false)
+		}
+	}
+
 	const renderAddEditProducts = (type: 'ADD' | 'EDIT', record?: TProductItem) => {
 		const isEdit = type === 'EDIT'
 		return (
 			<ModalForm
 				{...MODAL_FORM_PROPS}
-				labelCol={{ flex: '65px' }}
+				labelCol={{ flex: '100px' }}
 				initialValues={isEdit ? record : {}}
 				title={isEdit ? 'Edit Product' : 'Add Product'}
+				grid
 				trigger={
 					isEdit ? (
 						<Typography.Link
@@ -89,18 +163,53 @@ const Products = () => {
 				}
 				onFinish={async params => {
 					let res
+					const payload = omit({ ...params, images: uploadedImages?.map(img => img?.url) }, ['upload'])
 
 					if (isEdit) {
-						res = await updateProduct({ ...params, image: uploadedImages, id: record?.id })
+						res = await updateProduct({ ...payload, id: record?.id })
 					} else {
-						res = await addProduct({ ...params, image: uploadedImages })
+						res = await addProduct({ ...payload })
 						setUploadedImages([])
 					}
 
 					return afterModalformFinish(actionRef, res)
 				}}
+				onOpenChange={visible => !visible && setUploadedImages([])}
 			>
-				<ProFormText label="Title" name="title" rules={[{ required: true }]} />
+				<ProFormText label="Name" name="name" rules={[{ required: true }]} colProps={{ span: 24 }} />
+				<ProFormDigit label="Price" name="price" rules={[{ required: true }]} colProps={{ span: 12 }} />
+				<ProFormDigit label="Quantity" name="quantity" rules={[{ required: true }]} colProps={{ span: 12 }} />
+				<ProFormTextArea
+					label="Description"
+					name="description"
+					rules={[{ required: true }]}
+					colProps={{ span: 24 }}
+				/>
+				<ProFormSelect
+					label="CollectionID"
+					name="collection_id"
+					rules={[{ required: true }]}
+					colProps={{ span: 24 }}
+					request={getCollectionsData}
+				/>
+				<ProFormSelect
+					label="Sizes"
+					name="sizes"
+					mode="tags"
+					allowClear={false}
+					rules={[{ required: true }]}
+					colProps={{ span: 24 }}
+					getValueFromEvent={(e: string[]) => e?.map(q => q?.replace(/\s/g, ''))}
+				/>
+				<ProFormSelect
+					label="Colors"
+					name="colors"
+					mode="tags"
+					allowClear={false}
+					rules={[{ required: true }]}
+					colProps={{ span: 24 }}
+					getValueFromEvent={(e: string[]) => e?.map(q => q?.replace(/\s/g, ''))}
+				/>
 				<ProFormText label="Images" rules={[{ required: true }]}>
 					<div className={styles.galleryContainer}>
 						{uploading ? (
@@ -110,7 +219,6 @@ const Products = () => {
 								name="upload"
 								title="UPLOAD YOUR IMAGE"
 								fieldProps={{
-									name: 'files',
 									listType: 'picture-card',
 									accept: 'image/*',
 									multiple: true,
@@ -118,24 +226,7 @@ const Products = () => {
 										setUploadedImages(s => s.filter(q => q?.url !== e?.url))
 									},
 									fileList: uploadedImages as UploadFile<any>[],
-									//@ts-ignore
-									action: async e => {
-										if (validateImg(e) === '') return ''
-
-										setUploading(true)
-										if (!!!record?.images.length) {
-											setUploadedImages([])
-										}
-
-										try {
-											const res = await uploadImage(e)
-											setUploadedImages(state => [...state, { url: res.data?.data.url }])
-
-											return ''
-										} finally {
-											setUploading(false)
-										}
-									}
+									customRequest: handleCustomRequest
 								}}
 							/>
 						)}

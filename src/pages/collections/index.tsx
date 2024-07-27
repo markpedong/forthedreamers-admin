@@ -72,6 +72,21 @@ const Collections = () => {
 		}
 	]
 
+	const handleCustomRequest = async (e: any) => {
+		const file = e.file as RcFile
+
+		if (validateImg(file) === '') return
+
+		setUploading(true)
+
+		try {
+			const res = await uploadImage(file)
+			setUploadedImages(state => [...state, { ...file, url: res.data.data.url }])
+		} finally {
+			setUploading(false)
+		}
+	}
+
 	const renderAddEditCollections = (type: 'ADD' | 'EDIT', record?: TCollectionItem) => {
 		const isEdit = type === 'EDIT'
 		return (
@@ -126,23 +141,7 @@ const Collections = () => {
 										setUploadedImages(s => s.filter(q => q?.url !== e?.url))
 									},
 									fileList: uploadedImages as UploadFile<any>[],
-									action: async (e: RcFile) => {
-										if (validateImg(e) === '') return ''
-
-										setUploading(true)
-										if (!!!record?.images.length) {
-											setUploadedImages([])
-										}
-
-										try {
-											const res = await uploadImage(e)
-											setUploadedImages(state => [...state, { url: res.data?.data.url }])
-
-											return res.data?.data.url || ''
-										} finally {
-											setUploading(false)
-										}
-									}
+									customRequest: handleCustomRequest
 								}}
 							/>
 						)}

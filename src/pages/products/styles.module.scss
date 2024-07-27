@@ -4,8 +4,19 @@
     @apply flex items-center justify-start;
 }
 
-.imgContainer {
+
+.sizeContainer,
+.imgContainer,
+.colorContainer {
     @apply flex gap-3;
+}
+
+.sizeContainer,
+.colorContainer {
+    @apply flex-col;
+}
+
+.imgContainer {
 
     :global {
         .ant-image {

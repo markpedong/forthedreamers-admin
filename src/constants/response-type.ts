@@ -28,7 +28,14 @@ export type TUserItem = {
 
 export type TProductItem = {
 	id: string
+	name: string
+	Description: string
+	collection_id: string
+	price: number
+	quantity: number
 	images: string[]
+	sizes: string[]
+	colors: string[]
 	created_at: number
 	updated_at: number
 }
