@@ -25,10 +25,9 @@ export const UserSlice = createSlice({
 	initialState,
 	reducers: {
 		resetUserData: () => initialState,
-		setUserInfo: (state, action) => ({ ...state, userData: action.payload }),
-		setUserToken: (state, action) => ({ ...state, token: action.payload })
+		setUserInfo: (state, action) => ({ ...state, ...action.payload })
 	}
 })
 
-export const { setUserInfo, resetUserData, setUserToken } = UserSlice.actions
+export const { setUserInfo, resetUserData } = UserSlice.actions
 export default UserSlice.reducer

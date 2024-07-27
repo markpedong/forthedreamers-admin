@@ -6,9 +6,8 @@ import { useNavigate } from 'react-router-dom'
 export default function isAuth(Component: any) {
 	const dispatch = useAppDispatch()
 	const navigate = useNavigate()
-	const id = useAppSelector(state => state.userData?.id)
-	const token = useAppSelector(state => state.userData?.token)
-	const auth = id && token
+	const user = useAppSelector(state => state.userData)
+	const auth = user?.id && user?.token
 
 	useEffect(() => {
 		if (!auth) {
