@@ -33,6 +33,12 @@ export type TProductItem = {
 	updated_at: number
 }
 
+export type InitialState = {
+	refresh_token: string
+	token: string
+	userInfo: UserInfo
+}
+
 export type UserInfo = {
 	id: string
 	first_name: string

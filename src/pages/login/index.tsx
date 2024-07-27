@@ -37,7 +37,7 @@ const Login = () => {
 					const res = await login(params)
 					if (res?.data.success) {
 						setLocalStorage('token', res?.data.data.token)
-						await dispatch(setUserInfo(res?.data?.data.userInfo))
+						await dispatch(setUserInfo(res?.data?.data))
 						formRef?.current?.resetFields()
 						navigate('/app')
 					}
