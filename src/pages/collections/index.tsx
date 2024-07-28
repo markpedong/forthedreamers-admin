@@ -1,4 +1,4 @@
-import { addCollection, getCollections, updateCollection, uploadImage } from '@/api'
+import { addCollection, deleteCollection, getCollections, updateCollection, uploadImage } from '@/api'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
 import { TCollectionItem } from '@/constants/response-type'
 import { dateTimeFormatter } from '@/utils'
@@ -11,7 +11,7 @@ import {
 	ProFormUploadButton,
 	ProTable
 } from '@ant-design/pro-components'
-import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
+import { Button, Image, Popconfirm, Space, Spin, Typography, UploadFile } from 'antd'
 import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
 import { RcFile } from 'antd/lib/upload'
@@ -33,18 +33,14 @@ const Collections = () => {
 			align: 'center',
 			search: false,
 			render: (_, record) => {
-				return (
-					<div className={styles.imgContainer}>
-						{record?.images.map(img => <Image key={img} src={img} />)}
-					</div>
-				)
+				return <div className={styles.imgContainer}>{record?.images.map(img => <Image key={img} src={img} />)}</div>
 			}
 		},
 		{
 			title: (
 				<div className="flex flex-col gap-0">
-					<div>Created</div>
-					<div>Updated</div>
+					<span className="leading-4">Created</span>
+					<span className="leading-4">Updated</span>
 				</div>
 			),
 			search: false,
@@ -52,8 +48,8 @@ const Collections = () => {
 			width: 160,
 			render: (_, record) => (
 				<div className="flex flex-col">
-					<div>{dateTimeFormatter(record.created_at, 'MM-DD-YYYY HH:MM:ss')}</div>
-					<div>{dateTimeFormatter(record.updated_at, 'MM-DD-YYYY HH:MM:ss')}</div>
+					<span className="leading-4">{dateTimeFormatter(record.created_at, 'MM-DD-YYYY HH:MM:ss')}</span>
+					<span className="leading-4">{dateTimeFormatter(record.updated_at, 'MM-DD-YYYY HH:MM:ss')}</span>
 				</div>
 			)
 		},
@@ -66,7 +62,7 @@ const Collections = () => {
 				<Space>
 					{/* {renderSwitch(record)} */}
 					{renderAddEditCollections('EDIT', record)}
-					{/* {renderDeleteBlogs(record)} */}
+					{renderDeleteCollections(record)}
 				</Space>
 			)
 		}
@@ -148,6 +144,21 @@ const Collections = () => {
 					</div>
 				</ProFormText>
 			</ModalForm>
+		)
+	}
+
+	const renderDeleteCollections = (record: TCollectionItem) => {
+		return (
+			<Popconfirm
+				title="Delete this Collection?"
+				onConfirm={async () => {
+					const res = await deleteCollection({ id: record?.id })
+
+					return afterModalformFinish(actionRef, res)
+				}}
+			>
+				<Typography.Link type="danger">Delete</Typography.Link>
+			</Popconfirm>
 		)
 	}
 

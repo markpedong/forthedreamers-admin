@@ -17,6 +17,9 @@ export const addCollection = params => post('/collections/add', params)
 // /collections/update
 export const updateCollection = params => post('/collections/update', params)
 
+// /collections/update
+export const deleteCollection = params => post('/collections/delete', params)
+
 // /users/get
 export const getUsers = params => post<TUserItem[]>('/users/get', params)
 
