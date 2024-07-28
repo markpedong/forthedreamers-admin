@@ -51,17 +51,17 @@ const Users = () => {
 		{
 			title: (
 				<div className="flex flex-col gap-0">
-					<div>First Name</div>
-					<div>Last Name</div>
+					<span className='leading-4'>First Name</span>
+					<span className='leading-4'>Last Name</span>
 				</div>
 			),
 			align: 'center',
 			search: false,
 			width: 100,
 			render: (_, record) => (
-				<div className="flex flex-col">
-					<div>{record?.first_name}</div>
-					<div>{record?.last_name}</div>
+				<div className="flex flex-col gap-0">
+					<span className='leading-4'>{record?.first_name}</span>
+					<span className='leading-4'>{record?.last_name}</span>
 				</div>
 			)
 		},
@@ -85,8 +85,8 @@ const Users = () => {
 		{
 			title: (
 				<div className="flex flex-col gap-0">
-					<div>Created</div>
-					<div>Updated</div>
+					<span className='leading-4'>Created</span>
+					<span className='leading-4'>Updated</span>
 				</div>
 			),
 			search: false,
@@ -94,8 +94,8 @@ const Users = () => {
 			width: 160,
 			render: (_, record) => (
 				<div className="flex flex-col">
-					<div>{dateTimeFormatter(record.created_at, 'MM-DD-YYYY HH:MM:ss')}</div>
-					<div>{dateTimeFormatter(record.updated_at, 'MM-DD-YYYY HH:MM:ss')}</div>
+					<span className='leading-4'>{dateTimeFormatter(record.created_at, 'MM-DD-YYYY HH:MM:ss')}</span>
+					<span className='leading-4'>{dateTimeFormatter(record.updated_at, 'MM-DD-YYYY HH:MM:ss')}</span>
 				</div>
 			)
 		},
@@ -219,7 +219,7 @@ const Users = () => {
 				actionRef={actionRef}
 				request={fetchData}
 				toolBarRender={() => [renderAddUsers('ADD')]}
-				scroll={{ x: 1000 }}
+				scroll={{ x: 1200 }}
 			/>
 		</div>
 	)

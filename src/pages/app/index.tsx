@@ -35,13 +35,12 @@ const App: FC = () => {
 	]
 
 	const renderDarkMode = () => (
-		<div>
-			<Switch
-				onChange={() => dispatch(setDarkMode())}
-				checkedChildren={<IoMdMoon />}
-				unCheckedChildren={<IoMdSunny />}
-			/>
-		</div>
+		<Switch
+			onChange={() => dispatch(setDarkMode())}
+			checkedChildren={<IoMdMoon />}
+			unCheckedChildren={<IoMdSunny />}
+			className="w-13 rounded-full"
+		/>
 	)
 
 	return (
@@ -61,10 +60,7 @@ const App: FC = () => {
 			route={{ routes: cloneDeep(menus) }}
 			menuItemRender={(item, dom) => {
 				return (
-					<Typography.Link
-						style={{ paddingBlockStart: '0.5rem' }}
-						onClick={() => navigate(item.path as string)}
-					>
+					<Typography.Link style={{ paddingBlockStart: '0.5rem' }} onClick={() => navigate(item.path as string)}>
 						{dom}
 					</Typography.Link>
 				)

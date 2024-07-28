@@ -12,7 +12,8 @@ export default defineConfig({
 		port: 6602
 	},
 	define: {
-		'import.meta.env.PACKAGE_VERSION': JSON.stringify(packageJson.version)
+		'import.meta.env.PACKAGE_VERSION': JSON.stringify(packageJson.version),
+		'import.meta.env.DOMAIN': process.env.VITE_DOMAIN
 	},
 	plugins: [react(), sassDts(), tsConfigPaths()],
 	resolve: {
