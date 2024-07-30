@@ -6,7 +6,12 @@ import {
 	ActionType,
 	ModalForm,
 	ProColumns,
+	ProForm,
+	ProFormDatePicker,
 	ProFormDigit,
+	ProFormFieldSet,
+	ProFormGroup,
+	ProFormList,
 	ProFormSelect,
 	ProFormText,
 	ProFormTextArea,
@@ -163,22 +168,21 @@ const Products = () => {
 				}
 				onFinish={async params => {
 					let res
-					const payload = omit({ ...params, images: uploadedImages?.map(img => img?.url) }, ['upload'])
+					console.log(params)
+					// const payload = omit({ ...params, images: uploadedImages?.map(img => img?.url) }, ['upload'])
 
-					if (isEdit) {
-						res = await updateProduct({ ...payload, id: record?.id })
-					} else {
-						res = await addProduct({ ...payload })
-						setUploadedImages([])
-					}
+					// if (isEdit) {
+					// 	res = await updateProduct({ ...payload, id: record?.id })
+					// } else {
+					// 	res = await addProduct({ ...payload })
+					// 	setUploadedImages([])
+					// }
 
-					return afterModalformFinish(actionRef, res)
+					// return afterModalformFinish(actionRef, res)
 				}}
 				onOpenChange={visible => !visible && setUploadedImages([])}
 			>
 				<ProFormText label="Name" name="name" rules={[{ required: true }]} colProps={{ span: 24 }} />
-				<ProFormDigit label="Price" name="price" rules={[{ required: true }]} colProps={{ span: 12 }} />
-				<ProFormDigit label="Quantity" name="quantity" rules={[{ required: true }]} colProps={{ span: 12 }} />
 				<ProFormTextArea
 					label="Description"
 					name="description"
@@ -191,24 +195,6 @@ const Products = () => {
 					rules={[{ required: true }]}
 					colProps={{ span: 24 }}
 					request={getCollectionsData}
-				/>
-				<ProFormSelect
-					label="Sizes"
-					name="sizes"
-					mode="tags"
-					allowClear={false}
-					rules={[{ required: true }]}
-					colProps={{ span: 24 }}
-					getValueFromEvent={(e: string[]) => e?.map(q => q?.replace(/\s/g, ''))}
-				/>
-				<ProFormSelect
-					label="Colors"
-					name="colors"
-					mode="tags"
-					allowClear={false}
-					rules={[{ required: true }]}
-					colProps={{ span: 24 }}
-					getValueFromEvent={(e: string[]) => e?.map(q => q?.replace(/\s/g, ''))}
 				/>
 				<ProFormText label="Images" rules={[{ required: true }]}>
 					<div className={styles.galleryContainer}>
@@ -232,6 +218,53 @@ const Products = () => {
 						)}
 					</div>
 				</ProFormText>
+				<ProFormList
+					name="variations"
+					initialValue={[]}
+					required
+					creatorButtonProps={{
+						position: 'bottom',
+						creatorButtonText: 'Add Variation',
+						style: { fontSize: '0.85rem' }
+					}}
+					copyIconProps={false}
+					alwaysShowItemLabel
+				>
+					{(_, index) => {
+						return (
+							<ProFormFieldSet name="list" label={`Details-${index + 1}`} type="space">
+								<ProForm.Group>
+									<ProFormText
+										label="Size"
+										name="size"
+										rules={[{ required: true }]}
+										colProps={{ span: 12 }}
+									/>
+									<ProFormText
+										label="Color"
+										name="color"
+										rules={[{ required: true }]}
+										colProps={{ span: 12 }}
+									/>
+								</ProForm.Group>
+								<ProForm.Group>
+									<ProFormDigit
+										label="Price"
+										name="price"
+										rules={[{ required: true }]}
+										colProps={{ span: 12 }}
+									/>
+									<ProFormDigit
+										label="Quantity"
+										name="quantity"
+										rules={[{ required: true }]}
+										colProps={{ span: 12 }}
+									/>
+								</ProForm.Group>
+							</ProFormFieldSet>
+						)
+					}}
+				</ProFormList>
 			</ModalForm>
 		)
 	}
@@ -245,17 +278,15 @@ const Products = () => {
 	}
 
 	return (
-		<div>
-			<ProTable
-				{...PRO_TABLE_PROPS}
-				rowKey="id"
-				columns={columns}
-				actionRef={actionRef}
-				request={fetchData}
-				toolBarRender={() => [renderAddEditProducts('ADD')]}
-				scroll={{ x: 700 }}
-			/>
-		</div>
+		<ProTable
+			{...PRO_TABLE_PROPS}
+			rowKey="id"
+			columns={columns}
+			actionRef={actionRef}
+			request={fetchData}
+			toolBarRender={() => [renderAddEditProducts('ADD')]}
+			scroll={{ x: 700 }}
+		/>
 	)
 }
 
