@@ -1,4 +1,4 @@
-import { getCollections, getProducts, uploadImage } from '@/api'
+import { addProduct, getCollections, getProducts, updateProduct, uploadImage } from '@/api'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
 import { validateImg } from '@/constants/helper'
 import { TProductItem } from '@/constants/response-type'
@@ -21,6 +21,8 @@ import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
+import { omit } from 'lodash'
+import { afterModalformFinish } from '@/utils/antd'
 
 const Products = () => {
 	const [uploadedImages, setUploadedImages] = useState<{ url: string }[]>([])
@@ -41,39 +43,6 @@ const Products = () => {
 			title: 'Description',
 			align: 'center',
 			dataIndex: 'description'
-		},
-		{
-			title: (
-				<div className="flex flex-col gap-0">
-					<div>Price</div>
-					<div>Quantity</div>
-				</div>
-			),
-			search: false,
-			align: 'center',
-			width: 160,
-			render: (_, record) => (
-				<div className="flex flex-col">
-					<div>{record?.price}</div>
-					<div>{record?.quantity}</div>
-				</div>
-			)
-		},
-		{
-			title: 'Sizes',
-			align: 'center',
-			search: false,
-			render: (_, record) => {
-				return <div className={styles.sizeContainer}>{record?.sizes.map(size => <span>{size}</span>)}</div>
-			}
-		},
-		{
-			title: 'Color',
-			align: 'center',
-			search: false,
-			render: (_, record) => {
-				return <div className={styles.colorContainer}>{record?.colors.map(color => <span>{color}</span>)}</div>
-			}
 		},
 		{
 			title: 'Images',
@@ -163,23 +132,27 @@ const Products = () => {
 					)
 				}
 				onFinish={async params => {
-					// let res
-					console.log(params)
-					// const payload = omit({ ...params, images: uploadedImages?.map(img => img?.url) }, ['upload'])
+					let res
+					const payload = omit({ ...params, images: uploadedImages?.map(img => img?.url) }, ['upload'])
 
-					// if (isEdit) {
-					// 	res = await updateProduct({ ...payload, id: record?.id })
-					// } else {
-					// 	res = await addProduct({ ...payload })
-					// 	setUploadedImages([])
-					// }
+					if (isEdit) {
+						res = await updateProduct({ ...payload, id: record?.id })
+					} else {
+						res = await addProduct({ ...payload })
+						setUploadedImages([])
+					}
 
-					// return afterModalformFinish(actionRef, res)
+					return afterModalformFinish(actionRef, res)
 				}}
 				onOpenChange={visible => !visible && setUploadedImages([])}
 			>
 				<ProFormText label="Name" name="name" rules={[{ required: true }]} colProps={{ span: 24 }} />
-				<ProFormTextArea label="Description" name="description" rules={[{ required: true }]} colProps={{ span: 24 }} />
+				<ProFormTextArea
+					label="Description"
+					name="description"
+					rules={[{ required: true }]}
+					colProps={{ span: 24 }}
+				/>
 				<ProFormSelect
 					label="CollectionID"
 					name="collection_id"
@@ -211,7 +184,7 @@ const Products = () => {
 				</ProFormText>
 				<ProFormList
 					name="variations"
-					initialValue={[]}
+					initialValue={isEdit ? record?.variations : []}
 					required
 					creatorButtonProps={{
 						position: 'bottom',
@@ -225,12 +198,32 @@ const Products = () => {
 						return (
 							<ProFormFieldSet name="list" label={`Details-${index + 1}`} type="space">
 								<ProForm.Group>
-									<ProFormText label="Size" name="size" rules={[{ required: true }]} colProps={{ span: 12 }} />
-									<ProFormText label="Color" name="color" rules={[{ required: true }]} colProps={{ span: 12 }} />
+									<ProFormText
+										label="Size"
+										name="size"
+										rules={[{ required: true }]}
+										colProps={{ span: 12 }}
+									/>
+									<ProFormText
+										label="Color"
+										name="color"
+										rules={[{ required: true }]}
+										colProps={{ span: 12 }}
+									/>
 								</ProForm.Group>
 								<ProForm.Group>
-									<ProFormDigit label="Price" name="price" rules={[{ required: true }]} colProps={{ span: 12 }} />
-									<ProFormDigit label="Quantity" name="quantity" rules={[{ required: true }]} colProps={{ span: 12 }} />
+									<ProFormDigit
+										label="Price"
+										name="price"
+										rules={[{ required: true }]}
+										colProps={{ span: 12 }}
+									/>
+									<ProFormDigit
+										label="Quantity"
+										name="quantity"
+										rules={[{ required: true }]}
+										colProps={{ span: 12 }}
+									/>
 								</ProForm.Group>
 							</ProFormFieldSet>
 						)

@@ -26,16 +26,25 @@ export type TUserItem = {
 	updated_at: number
 }
 
+export type TVariationItem = {
+	id: string
+	size: string
+	color: string
+	price: number
+	quantity: number
+	created_at: number
+	updated_at: number
+	product_id: string
+	status: number
+}
+
 export type TProductItem = {
 	id: string
 	name: string
 	Description: string
 	collection_id: string
-	price: number
-	quantity: number
 	images: string[]
-	sizes: string[]
-	colors: string[]
+	variations: TVariationItem[]
 	created_at: number
 	updated_at: number
 }

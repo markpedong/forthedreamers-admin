@@ -14,7 +14,7 @@ export type ApiResponse<T = null> = {
 
 const throttleAlert = (msg: string) => throttle(message.error(msg), 1500, { trailing: false })
 
-const instance: AxiosInstance = axios.create({ timeout: 60000 })
+const instance: AxiosInstance = axios.create({ timeout: 60000, withCredentials: true })
 
 instance.interceptors.response.use(response => {
 	if (!response?.data.success) {

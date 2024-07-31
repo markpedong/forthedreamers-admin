@@ -9,8 +9,10 @@ import { theme } from 'antd'
 import { useRef } from 'react'
 import styles from './styles.module.scss'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 const Login = () => {
 	const dispatch = useAppDispatch()
+	const navigate = useNavigate()
 	const formRef = useRef<ProFormInstance>()
 	const { token } = theme.useToken()
 
@@ -37,6 +39,7 @@ const Login = () => {
 						setLocalStorage('token', res?.data.data.token)
 						await dispatch(setUserInfo(res?.data?.data))
 						formRef?.current?.resetFields()
+						navigate('/app/users')
 					}
 
 					return afterModalformFinish(undefined, res, formRef)
