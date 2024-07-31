@@ -7,11 +7,9 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { LoginFormPage, ProFormInstance, ProFormText } from '@ant-design/pro-components'
 import { theme } from 'antd'
 import { useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
 import styles from './styles.module.scss'
 import { motion } from 'framer-motion'
 const Login = () => {
-	const navigate = useNavigate()
 	const dispatch = useAppDispatch()
 	const formRef = useRef<ProFormInstance>()
 	const { token } = theme.useToken()
@@ -39,7 +37,6 @@ const Login = () => {
 						setLocalStorage('token', res?.data.data.token)
 						await dispatch(setUserInfo(res?.data?.data))
 						formRef?.current?.resetFields()
-						navigate('/app/users')
 					}
 
 					return afterModalformFinish(undefined, res, formRef)

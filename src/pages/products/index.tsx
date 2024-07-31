@@ -1,16 +1,15 @@
+import { getCollections, getProducts, uploadImage } from '@/api'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
+import { validateImg } from '@/constants/helper'
 import { TProductItem } from '@/constants/response-type'
 import { dateTimeFormatter } from '@/utils'
-import { afterModalformFinish } from '@/utils/antd'
 import {
 	ActionType,
 	ModalForm,
 	ProColumns,
 	ProForm,
-	ProFormDatePicker,
 	ProFormDigit,
 	ProFormFieldSet,
-	ProFormGroup,
 	ProFormList,
 	ProFormSelect,
 	ProFormText,
@@ -19,12 +18,9 @@ import {
 	ProTable
 } from '@ant-design/pro-components'
 import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
+import { RcFile } from 'antd/lib/upload'
 import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
-import { addProduct, getCollections, getProducts, updateProduct, uploadImage } from '@/api'
-import { validateImg } from '@/constants/helper'
-import { omit } from 'lodash'
-import { RcFile } from 'antd/lib/upload'
 
 const Products = () => {
 	const [uploadedImages, setUploadedImages] = useState<{ url: string }[]>([])
@@ -167,7 +163,7 @@ const Products = () => {
 					)
 				}
 				onFinish={async params => {
-					let res
+					// let res
 					console.log(params)
 					// const payload = omit({ ...params, images: uploadedImages?.map(img => img?.url) }, ['upload'])
 
@@ -183,12 +179,7 @@ const Products = () => {
 				onOpenChange={visible => !visible && setUploadedImages([])}
 			>
 				<ProFormText label="Name" name="name" rules={[{ required: true }]} colProps={{ span: 24 }} />
-				<ProFormTextArea
-					label="Description"
-					name="description"
-					rules={[{ required: true }]}
-					colProps={{ span: 24 }}
-				/>
+				<ProFormTextArea label="Description" name="description" rules={[{ required: true }]} colProps={{ span: 24 }} />
 				<ProFormSelect
 					label="CollectionID"
 					name="collection_id"
@@ -234,32 +225,12 @@ const Products = () => {
 						return (
 							<ProFormFieldSet name="list" label={`Details-${index + 1}`} type="space">
 								<ProForm.Group>
-									<ProFormText
-										label="Size"
-										name="size"
-										rules={[{ required: true }]}
-										colProps={{ span: 12 }}
-									/>
-									<ProFormText
-										label="Color"
-										name="color"
-										rules={[{ required: true }]}
-										colProps={{ span: 12 }}
-									/>
+									<ProFormText label="Size" name="size" rules={[{ required: true }]} colProps={{ span: 12 }} />
+									<ProFormText label="Color" name="color" rules={[{ required: true }]} colProps={{ span: 12 }} />
 								</ProForm.Group>
 								<ProForm.Group>
-									<ProFormDigit
-										label="Price"
-										name="price"
-										rules={[{ required: true }]}
-										colProps={{ span: 12 }}
-									/>
-									<ProFormDigit
-										label="Quantity"
-										name="quantity"
-										rules={[{ required: true }]}
-										colProps={{ span: 12 }}
-									/>
+									<ProFormDigit label="Price" name="price" rules={[{ required: true }]} colProps={{ span: 12 }} />
+									<ProFormDigit label="Quantity" name="quantity" rules={[{ required: true }]} colProps={{ span: 12 }} />
 								</ProForm.Group>
 							</ProFormFieldSet>
 						)
