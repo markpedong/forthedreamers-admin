@@ -110,18 +110,20 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 				type: 'multiple',
 				editableKeys,
 				onSave: async (_, data) => {
-					let res 
+					let res
 
-					console.log(data)
-					// const res = await updateVariations(
-					// 	omit({ ...data, price: +data?.price!, quantity: +data?.quantity! }, [
-					// 		'created_at',
-					// 		'index',
-					// 		'updated_at',
-					// 		'status',
-					// 		'product_id'
-					// 	])
-					// )
+					if (data?.id.length > 1) {
+						res = await updateVariations(
+							omit({ ...data, price: +data?.price!, quantity: +data?.quantity! }, [
+								'created_at',
+								'index',
+								'updated_at',
+								'status',
+								'product_id'
+							])
+						)
+					} else {
+					}
 
 					return afterModalformFinish(actionRef, res)
 				},
