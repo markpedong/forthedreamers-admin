@@ -6,14 +6,6 @@ import { EditableProTable } from '@ant-design/pro-components'
 import { Typography } from 'antd'
 import React, { FC, useState } from 'react'
 
-const waitTime = (time: number = 100) => {
-	return new Promise(resolve => {
-		setTimeout(() => {
-			resolve(true)
-		}, time)
-	})
-}
-
 const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 	const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([])
 	const [dataSource, setDataSource] = useState<readonly TVariationItem[]>([])
@@ -97,7 +89,6 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 				editableKeys,
 				onSave: async (rowKey, data, row) => {
 					console.log('@@@', rowKey, data, row)
-					await waitTime(2000)
 				},
 				onChange: setEditableRowKeys,
 				saveText: <span className="text-green-500">Save</span>,
