@@ -1,5 +1,5 @@
 import { post, upload } from '@/api/http'
-import { TCollectionItem, TLoginDetails, TProductItem, TUserItem } from '@/constants/response-type'
+import { TCollectionItem, TLoginDetails, TProductItem, TUserItem, TVariationItem } from '@/constants/response-type'
 import { TUploadImage } from '@/constants/types'
 
 // /public/login
@@ -37,3 +37,9 @@ export const addProduct = params => post('/products/add', params)
 
 // /products/update
 export const updateProduct = params => post('/products/update', params)
+
+// /variations/get
+export const getVariations = params => post<TVariationItem[]>('/variations/get', params)
+
+// /variations/update
+export const updateVariations = params => post<TVariationItem[]>('/variations/update', params)

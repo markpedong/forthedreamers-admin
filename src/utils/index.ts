@@ -6,18 +6,20 @@ export const formatNumber = (num: number, format: string = '0,0') => {
 }
 
 export const ignoreFindDOMNodeError = () => {
-	// eslint-disable-next-line
-	const consoleError = console.error.bind(console)
-	// eslint-disable-next-line
-	console.error = (errObj, ...args) => {
-		if (typeof errObj === 'string' && args.includes('findDOMNode')) {
-			return
+	const originalConsoleError = console.error.bind(console)
+
+	console.error = (...args) => {
+		if (args.length > 0 && !!args[0]) {
+			const error = args[0] as string
+			if (error.includes('find')) {
+				return
+			}
 		}
-		consoleError(errObj, ...args)
+		originalConsoleError(...args)
 	}
 }
 
-export const dateTimeFormatter = (date, format = "MM-DD-YYYY") => dayjs.unix(date).format(format)
+export const dateTimeFormatter = (date, format = 'MM-DD-YYYY') => dayjs.unix(date).format(format)
 
 export const INPUT_TRIM = {
 	getValueFromEvent: e => e?.target.value?.trim()
@@ -33,9 +35,9 @@ export const INPUT_LETTERS = {
 
 export const INPUT_EMAIL = {
 	getValueFromEvent: e => {
-		const trimmedValue = e?.target.value?.trim();
-		const validEmail = trimmedValue.replace(/[^\w.@+-]/g, ''); // Remove characters not allowed in an email address
-		return validEmail;
+		const trimmedValue = e?.target.value?.trim()
+		const validEmail = trimmedValue.replace(/[^\w.@+-]/g, '') // Remove characters not allowed in an email address
+		return validEmail
 	}
 }
 
