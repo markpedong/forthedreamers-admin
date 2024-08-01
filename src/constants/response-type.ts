@@ -46,6 +46,7 @@ export type TProductItem = {
 	images: string[]
 	created_at: number
 	updated_at: number
+	status: number
 }
 
 export type InitialState = {

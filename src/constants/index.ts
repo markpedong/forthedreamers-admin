@@ -48,7 +48,7 @@ export const MODAL_FORM_PROPS: ModalFormProps = {
 	wrapperCol: { flex: 1 },
 	autoFocusFirstInput: true,
 	preserve: false,
-	size: 'large'
+	size: 'middle'
 }
 
 export const FORM_PROPS: ProFormProps = {

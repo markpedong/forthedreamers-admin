@@ -1,15 +1,18 @@
-import { getVariations } from '@/api'
+import { deleteVariations, getVariations, toggleVariations, updateVariations } from '@/api'
+import { GLOBAL_STATUS } from '@/api/constants'
 import { TProductItem, TVariationItem } from '@/constants/response-type'
 import { dateTimeFormatter } from '@/utils'
-import type { ProColumns } from '@ant-design/pro-components'
+import { afterModalformFinish } from '@/utils/antd'
+import type { ActionType, ProColumns } from '@ant-design/pro-components'
 import { EditableProTable } from '@ant-design/pro-components'
-import { Typography } from 'antd'
-import React, { FC, useState } from 'react'
+import { Space, Switch, Typography } from 'antd'
+import { omit } from 'lodash'
+import React, { FC, useRef, useState } from 'react'
 
 const Variations: FC<{ record: TProductItem }> = ({ record }) => {
+	const actionRef = useRef<ActionType>()
 	const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([])
 	const [dataSource, setDataSource] = useState<readonly TVariationItem[]>([])
-
 	const columns: ProColumns<TVariationItem>[] = [
 		{
 			title: 'Size',
@@ -52,16 +55,34 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 			valueType: 'option',
 			align: 'center',
 			render: (_1, record, _, action) => (
-				<Typography.Link
-					onClick={() => {
-						action?.startEditable?.(record.id)
-					}}
-				>
-					Edit
-				</Typography.Link>
+				<Space>
+					{renderSwitch(record)}
+					<Typography.Link
+						onClick={() => {
+							action?.startEditable?.(record.id)
+						}}
+					>
+						Edit
+					</Typography.Link>
+				</Space>
 			)
 		}
 	]
+
+	const renderSwitch = (record: TVariationItem) => {
+		return (
+			<Switch
+				unCheckedChildren="OFF"
+				checkedChildren="ON"
+				checked={record?.status === GLOBAL_STATUS.ON}
+				onChange={async () => {
+					const res = await toggleVariations({ id: record?.id })
+
+					return afterModalformFinish(actionRef, res)
+				}}
+			/>
+		)
+	}
 
 	const fetchData = async () => {
 		const res = await getVariations({ id: record?.id })
@@ -77,8 +98,9 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 			headerTitle={`${record?.name}'s variations`}
 			maxLength={10}
 			recordCreatorProps={{
-				record: () => ({ id: (Math.random() * 1000000).toFixed(0) })
+				record: () => ({ id: (Math.random() * 1).toFixed(0) })
 			}}
+			actionRef={actionRef}
 			loading={false}
 			columns={columns}
 			request={fetchData}
@@ -87,10 +109,28 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 			editable={{
 				type: 'multiple',
 				editableKeys,
-				onSave: async (rowKey, data, row) => {
-					console.log('@@@', rowKey, data, row)
+				onSave: async (_, data) => {
+					let res 
+
+					console.log(data)
+					// const res = await updateVariations(
+					// 	omit({ ...data, price: +data?.price!, quantity: +data?.quantity! }, [
+					// 		'created_at',
+					// 		'index',
+					// 		'updated_at',
+					// 		'status',
+					// 		'product_id'
+					// 	])
+					// )
+
+					return afterModalformFinish(actionRef, res)
 				},
 				onChange: setEditableRowKeys,
+				onDelete: async (_, data) => {
+					const res = await deleteVariations({ id: data?.id })
+
+					return afterModalformFinish(actionRef, res)
+				},
 				saveText: <span className="text-green-500">Save</span>,
 				deleteText: <span className="text-red-500">Delete</span>,
 				cancelText: <span className="text-blue-500">Cancel</span>

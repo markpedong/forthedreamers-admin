@@ -1,4 +1,4 @@
-import { addProduct, getCollections, getProducts, updateProduct, uploadImage } from '@/api'
+import { addProduct, getCollections, getProducts, toggleProducts, updateProduct, uploadImage } from '@/api'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
 import { validateImg } from '@/constants/helper'
 import { TProductItem } from '@/constants/response-type'
@@ -14,12 +14,13 @@ import {
 	ProFormUploadButton,
 	ProTable
 } from '@ant-design/pro-components'
-import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
+import { Button, Image, Space, Spin, Switch, Typography, UploadFile } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import { omit } from 'lodash'
 import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
 import Variations from './variations'
+import { GLOBAL_STATUS } from '@/api/constants'
 
 const Products = () => {
 	const [uploadedImages, setUploadedImages] = useState<{ url: string }[]>([])
@@ -73,13 +74,28 @@ const Products = () => {
 			width: 160,
 			render: (_, record) => (
 				<Space>
-					{/* {renderSwitch(record)} */}
+					{renderSwitch(record)}
 					{renderAddEditProducts('EDIT', record)}
 					{/* {renderDeleteBlogs(record)} */}
 				</Space>
 			)
 		}
 	]
+
+	const renderSwitch = (record: TProductItem) => {
+		return (
+			<Switch
+				unCheckedChildren="OFF"
+				checkedChildren="ON"
+				checked={record?.status === GLOBAL_STATUS.ON}
+				onChange={async () => {
+					const res = await toggleProducts({ id: record?.id })
+
+					return afterModalformFinish(actionRef, res)
+				}}
+			/>
+		)
+	}
 
 	const getCollectionsData = async () => {
 		const res = await getCollections({})
@@ -174,33 +190,6 @@ const Products = () => {
 						)}
 					</div>
 				</ProFormText>
-				{/* <ProFormList
-					name="variations"
-					initialValue={isEdit ? record?.variations : []}
-					required
-					creatorButtonProps={{
-						position: 'bottom',
-						creatorButtonText: 'Add Variation',
-						style: { fontSize: '0.85rem' }
-					}}
-					copyIconProps={false}
-					alwaysShowItemLabel
-				>
-					{(_, index) => {
-						return (
-							<ProFormFieldSet name="list" label={`Details-${index + 1}`} type="space">
-								<ProForm.Group>
-									<ProFormText label="Size" name="size" rules={[{ required: true }]} colProps={{ span: 12 }} />
-									<ProFormText label="Color" name="color" rules={[{ required: true }]} colProps={{ span: 12 }} />
-								</ProForm.Group>
-								<ProForm.Group>
-									<ProFormDigit label="Price" name="price" rules={[{ required: true }]} colProps={{ span: 12 }} />
-									<ProFormDigit label="Quantity" name="quantity" rules={[{ required: true }]} colProps={{ span: 12 }} />
-								</ProForm.Group>
-							</ProFormFieldSet>
-						)
-					}}
-				</ProFormList> */}
 			</ModalForm>
 		)
 	}

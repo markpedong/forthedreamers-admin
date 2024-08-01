@@ -38,8 +38,17 @@ export const addProduct = params => post('/products/add', params)
 // /products/update
 export const updateProduct = params => post('/products/update', params)
 
+// /products/toggle
+export const toggleProducts = params => post('/products/toggle', params)
+
 // /variations/get
 export const getVariations = params => post<TVariationItem[]>('/variations/get', params)
 
 // /variations/update
-export const updateVariations = params => post<TVariationItem[]>('/variations/update', params)
+export const updateVariations = params => post('/variations/update', params)
+
+// /variations/toggle
+export const toggleVariations = params => post('/variations/toggle', params)
+
+// /variations/delete
+export const deleteVariations = params => post('/variations/delete', params)
