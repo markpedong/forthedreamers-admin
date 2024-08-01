@@ -52,3 +52,6 @@ export const toggleVariations = params => post('/variations/toggle', params)
 
 // /variations/delete
 export const deleteVariations = params => post('/variations/delete', params)
+
+// /variations/add
+export const addVariations = params => post('/variations/add', params)

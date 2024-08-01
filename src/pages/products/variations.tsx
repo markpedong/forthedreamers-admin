@@ -1,38 +1,54 @@
-import { deleteVariations, getVariations, toggleVariations, updateVariations } from '@/api'
+import { addVariations, deleteVariations, getVariations, toggleVariations, updateVariations } from '@/api'
 import { GLOBAL_STATUS } from '@/api/constants'
 import { TProductItem, TVariationItem } from '@/constants/response-type'
 import { dateTimeFormatter } from '@/utils'
 import { afterModalformFinish } from '@/utils/antd'
 import type { ActionType, ProColumns } from '@ant-design/pro-components'
 import { EditableProTable } from '@ant-design/pro-components'
-import { Space, Switch, Typography } from 'antd'
+import { message, Popconfirm, Space, Switch, Typography } from 'antd'
 import { omit } from 'lodash'
 import React, { FC, useRef, useState } from 'react'
 
-const Variations: FC<{ record: TProductItem }> = ({ record }) => {
-	const actionRef = useRef<ActionType>()
+const Variations: FC<{ product: TProductItem }> = ({ product }) => {
 	const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([])
 	const [dataSource, setDataSource] = useState<readonly TVariationItem[]>([])
+	const actionRef = useRef<ActionType>()
 	const columns: ProColumns<TVariationItem>[] = [
 		{
 			title: 'Size',
 			dataIndex: 'size',
-			align: 'center'
+			align: 'center',
+			fieldProps: { placeholder: 'Enter Size' },
+			formItemProps: () => ({
+				rules: [{ required: true, message: 'Size is Required' }]
+			})
 		},
 		{
 			title: 'Color',
 			dataIndex: 'color',
-			align: 'center'
+			align: 'center',
+			fieldProps: { placeholder: 'Enter Color' },
+			formItemProps: () => ({
+				rules: [{ required: true, message: 'Color is Required' }]
+			})
 		},
 		{
 			title: 'Price',
 			dataIndex: 'price',
-			align: 'center'
+			align: 'center',
+			fieldProps: { placeholder: 'Enter Price' },
+			formItemProps: () => ({
+				rules: [{ required: true, message: 'Price is Required' }]
+			})
 		},
 		{
 			title: 'Quantity',
 			dataIndex: 'quantity',
-			align: 'center'
+			align: 'center',
+			fieldProps: { placeholder: 'Enter Quantity' },
+			formItemProps: () => ({
+				rules: [{ required: true, message: 'Quantity is Required' }]
+			})
 		},
 		{
 			title: (
@@ -64,6 +80,19 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 					>
 						Edit
 					</Typography.Link>
+					<Popconfirm
+						title="Delete this variation?"
+						description="Are you sure to delete this?"
+						onConfirm={async () => {
+							const res = await deleteVariations({ id: record?.id })
+
+							return afterModalformFinish(actionRef, res)
+						}}
+						okText="Yes"
+						cancelText="No"
+					>
+						<Typography.Link type="danger">Delete</Typography.Link>
+					</Popconfirm>
 				</Space>
 			)
 		}
@@ -85,7 +114,7 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 	}
 
 	const fetchData = async () => {
-		const res = await getVariations({ id: record?.id })
+		const res = await getVariations({ product_id: product?.id })
 
 		return {
 			data: res?.data.data ?? []
@@ -95,10 +124,10 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 	return (
 		<EditableProTable<TVariationItem>
 			rowKey="id"
-			headerTitle={`${record?.name}'s variations`}
-			maxLength={10}
+			headerTitle={`${product?.name}'s variations`}
+			maxLength={5}
 			recordCreatorProps={{
-				record: () => ({ id: (Math.random() * 1).toFixed(0) })
+				record: () => ({ id: (Math.random() * 10).toFixed(0) })
 			}}
 			actionRef={actionRef}
 			loading={false}
@@ -111,30 +140,26 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 				editableKeys,
 				onSave: async (_, data) => {
 					let res
+					let payload = omit({ ...data, price: +data?.price!, quantity: +data?.quantity! }, [
+						'created_at',
+						'index',
+						'updated_at',
+						'status',
+						'product_id'
+					])
 
-					if (data?.id.length > 1) {
-						res = await updateVariations(
-							omit({ ...data, price: +data?.price!, quantity: +data?.quantity! }, [
-								'created_at',
-								'index',
-								'updated_at',
-								'status',
-								'product_id'
-							])
-						)
+					if (data?.id.includes('-')) {
+						res = await updateVariations(payload)
 					} else {
+						if (Object.values(payload).includes('' || NaN)) return message.error('must have all values')
+
+						res = await addVariations({ ...payload, product_id: product?.id })
 					}
 
 					return afterModalformFinish(actionRef, res)
 				},
 				onChange: setEditableRowKeys,
-				onDelete: async (_, data) => {
-					const res = await deleteVariations({ id: data?.id })
-
-					return afterModalformFinish(actionRef, res)
-				},
 				saveText: <span className="text-green-500">Save</span>,
-				deleteText: <span className="text-red-500">Delete</span>,
 				cancelText: <span className="text-blue-500">Cancel</span>
 			}}
 		/>

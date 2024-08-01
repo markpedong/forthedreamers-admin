@@ -47,7 +47,11 @@ const Products = () => {
 			align: 'center',
 			search: false,
 			render: (_, record) => {
-				return <div className={styles.imgContainer}>{record?.images.map(img => <Image src={img} key={img} />)}</div>
+				return (
+					<div className={styles.imgContainer}>
+						{record?.images.map(img => <Image src={img} key={img} />)}
+					</div>
+				)
 			}
 		},
 		{
@@ -160,7 +164,12 @@ const Products = () => {
 				onOpenChange={visible => !visible && setUploadedImages([])}
 			>
 				<ProFormText label="Name" name="name" rules={[{ required: true }]} colProps={{ span: 24 }} />
-				<ProFormTextArea label="Description" name="description" rules={[{ required: true }]} colProps={{ span: 24 }} />
+				<ProFormTextArea
+					label="Description"
+					name="description"
+					rules={[{ required: true }]}
+					colProps={{ span: 24 }}
+				/>
 				<ProFormSelect
 					label="CollectionID"
 					name="collection_id"
@@ -211,7 +220,7 @@ const Products = () => {
 			request={fetchData}
 			toolBarRender={() => [renderAddEditProducts('ADD')]}
 			expandable={{
-				expandedRowRender: record => <Variations record={record} />
+				expandedRowRender: record => <Variations product={record} />
 			}}
 		/>
 	)
