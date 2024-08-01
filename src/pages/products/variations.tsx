@@ -83,10 +83,7 @@ const Variations: FC<{ record: TProductItem }> = ({ record }) => {
 		<EditableProTable<TVariationItem>
 			rowKey="id"
 			headerTitle={`${record?.name}'s variations`}
-			maxLength={5}
-			scroll={{
-				x: 960
-			}}
+			maxLength={10}
 			recordCreatorProps={{
 				record: () => ({ id: (Math.random() * 1000000).toFixed(0) })
 			}}
