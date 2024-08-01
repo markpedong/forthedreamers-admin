@@ -3,14 +3,11 @@ import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
 import { validateImg } from '@/constants/helper'
 import { TProductItem } from '@/constants/response-type'
 import { dateTimeFormatter } from '@/utils'
+import { afterModalformFinish } from '@/utils/antd'
+import type { ProColumns } from '@ant-design/pro-components'
 import {
 	ActionType,
 	ModalForm,
-	ProColumns,
-	ProForm,
-	ProFormDigit,
-	ProFormFieldSet,
-	ProFormList,
 	ProFormSelect,
 	ProFormText,
 	ProFormTextArea,
@@ -19,10 +16,10 @@ import {
 } from '@ant-design/pro-components'
 import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
 import { RcFile } from 'antd/lib/upload'
+import { omit } from 'lodash'
 import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
-import { omit } from 'lodash'
-import { afterModalformFinish } from '@/utils/antd'
+import Variations from './variations'
 
 const Products = () => {
 	const [uploadedImages, setUploadedImages] = useState<{ url: string }[]>([])
@@ -49,7 +46,7 @@ const Products = () => {
 			align: 'center',
 			search: false,
 			render: (_, record) => {
-				return <div className={styles.imgContainer}>{record?.images.map(img => <Image src={img} />)}</div>
+				return <div className={styles.imgContainer}>{record?.images.map(img => <Image src={img} key={img} />)}</div>
 			}
 		},
 		{
@@ -147,12 +144,7 @@ const Products = () => {
 				onOpenChange={visible => !visible && setUploadedImages([])}
 			>
 				<ProFormText label="Name" name="name" rules={[{ required: true }]} colProps={{ span: 24 }} />
-				<ProFormTextArea
-					label="Description"
-					name="description"
-					rules={[{ required: true }]}
-					colProps={{ span: 24 }}
-				/>
+				<ProFormTextArea label="Description" name="description" rules={[{ required: true }]} colProps={{ span: 24 }} />
 				<ProFormSelect
 					label="CollectionID"
 					name="collection_id"
@@ -182,7 +174,7 @@ const Products = () => {
 						)}
 					</div>
 				</ProFormText>
-				<ProFormList
+				{/* <ProFormList
 					name="variations"
 					initialValue={isEdit ? record?.variations : []}
 					required
@@ -198,37 +190,17 @@ const Products = () => {
 						return (
 							<ProFormFieldSet name="list" label={`Details-${index + 1}`} type="space">
 								<ProForm.Group>
-									<ProFormText
-										label="Size"
-										name="size"
-										rules={[{ required: true }]}
-										colProps={{ span: 12 }}
-									/>
-									<ProFormText
-										label="Color"
-										name="color"
-										rules={[{ required: true }]}
-										colProps={{ span: 12 }}
-									/>
+									<ProFormText label="Size" name="size" rules={[{ required: true }]} colProps={{ span: 12 }} />
+									<ProFormText label="Color" name="color" rules={[{ required: true }]} colProps={{ span: 12 }} />
 								</ProForm.Group>
 								<ProForm.Group>
-									<ProFormDigit
-										label="Price"
-										name="price"
-										rules={[{ required: true }]}
-										colProps={{ span: 12 }}
-									/>
-									<ProFormDigit
-										label="Quantity"
-										name="quantity"
-										rules={[{ required: true }]}
-										colProps={{ span: 12 }}
-									/>
+									<ProFormDigit label="Price" name="price" rules={[{ required: true }]} colProps={{ span: 12 }} />
+									<ProFormDigit label="Quantity" name="quantity" rules={[{ required: true }]} colProps={{ span: 12 }} />
 								</ProForm.Group>
 							</ProFormFieldSet>
 						)
 					}}
-				</ProFormList>
+				</ProFormList> */}
 			</ModalForm>
 		)
 	}
@@ -249,7 +221,9 @@ const Products = () => {
 			actionRef={actionRef}
 			request={fetchData}
 			toolBarRender={() => [renderAddEditProducts('ADD')]}
-			scroll={{ x: 700 }}
+			expandable={{
+				expandedRowRender: record => <Variations record={record} />
+			}}
 		/>
 	)
 }
