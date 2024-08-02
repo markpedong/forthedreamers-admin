@@ -13,7 +13,7 @@ export default defineConfig({
 	},
 	define: {
 		'import.meta.env.PACKAGE_VERSION': JSON.stringify(packageJson.version),
-		'import.meta.env.DOMAIN': process.env.VITE_DOMAIN
+		// 'import.meta.env.DOMAIN': process.env.VITE_DOMAIN
 	},
 	plugins: [react(), sassDts(), tsConfigPaths()],
 	resolve: {
