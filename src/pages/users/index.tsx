@@ -213,6 +213,8 @@ const Users = () => {
           label='Role'
           name='role'
           rules={[{ required: true }]}
+          options={['ADMIN', 'USER']}
+          initialValue='USER'
           placeholder='eg: USER or ADMIN'
           fieldProps={{ maxLength: 15 }}
         />
