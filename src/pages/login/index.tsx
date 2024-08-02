@@ -26,7 +26,7 @@ const Login = () => {
 		>
 			<LoginFormPage
 				backgroundVideoUrl="https://res.cloudinary.com/dmewvemeu/video/upload/v1722582919/forthedreamers/creatives/b3ryyfowttpwgpmktmsk.mp4"
-				title={'For the Dreamers'}
+				title="For the Dreamers"
 				subTitle={<span style={{ color: 'white' }}>Access CMS for For the Dreamers</span>}
 				containerStyle={{
 					backgroundColor: 'rgba(0, 0, 0,0.65)',
