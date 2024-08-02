@@ -25,7 +25,7 @@ const Login = () => {
 			className={styles.loginContainer}
 		>
 			<LoginFormPage
-				backgroundVideoUrl="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
+				backgroundVideoUrl="https://res.cloudinary.com/dmewvemeu/video/upload/v1722582919/forthedreamers/creatives/b3ryyfowttpwgpmktmsk.mp4"
 				title={'For the Dreamers'}
 				subTitle={<span style={{ color: 'white' }}>Access CMS for For the Dreamers</span>}
 				containerStyle={{
