@@ -31,6 +31,7 @@ export const PRO_TABLE_PROPS: ProTableProps<any, any> = {
 			xxl: 4
 		}
 	},
+	size: 'small',
 	pagination: {
 		defaultPageSize: 20,
 		showSizeChanger: true
