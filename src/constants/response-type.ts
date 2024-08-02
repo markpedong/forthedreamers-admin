@@ -24,6 +24,7 @@ export type TUserItem = {
 	password: string
 	created_at: number
 	updated_at: number
+	status: number
 }
 
 export type TVariationItem = {

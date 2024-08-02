@@ -1,4 +1,4 @@
-import { addUser, getUsers, updateUser, uploadImage } from '@/api'
+import { addUser, deleteUser, getUsers, toggleUser, updateUser, uploadImage } from '@/api'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
 import { TUserItem } from '@/constants/response-type'
 import { dateTimeFormatter } from '@/utils'
@@ -12,11 +12,12 @@ import {
 	ProFormUploadButton,
 	ProTable
 } from '@ant-design/pro-components'
-import { Button, Image, Space, Spin, Typography, UploadFile } from 'antd'
+import { Button, Image, Popconfirm, Space, Spin, Switch, Typography, UploadFile } from 'antd'
 import { useRef, useState } from 'react'
 import styles from './styles.module.scss'
 import { RcFile } from 'antd/es/upload'
 import { validateImg } from '@/constants/helper'
+import { GLOBAL_STATUS } from '@/api/constants'
 
 const Users = () => {
 	const [uploadedImg, setUploadedImg] = useState('')
@@ -51,8 +52,8 @@ const Users = () => {
 		{
 			title: (
 				<div className="flex flex-col gap-0">
-					<span className='leading-4'>First Name</span>
-					<span className='leading-4'>Last Name</span>
+					<span className="leading-4">First Name</span>
+					<span className="leading-4">Last Name</span>
 				</div>
 			),
 			align: 'center',
@@ -60,8 +61,8 @@ const Users = () => {
 			width: 100,
 			render: (_, record) => (
 				<div className="flex flex-col gap-0">
-					<span className='leading-4'>{record?.first_name}</span>
-					<span className='leading-4'>{record?.last_name}</span>
+					<span className="leading-4">{record?.first_name}</span>
+					<span className="leading-4">{record?.last_name}</span>
 				</div>
 			)
 		},
@@ -85,8 +86,8 @@ const Users = () => {
 		{
 			title: (
 				<div className="flex flex-col gap-0">
-					<span className='leading-4'>Created</span>
-					<span className='leading-4'>Updated</span>
+					<span className="leading-4">Created</span>
+					<span className="leading-4">Updated</span>
 				</div>
 			),
 			search: false,
@@ -94,8 +95,8 @@ const Users = () => {
 			width: 160,
 			render: (_, record) => (
 				<div className="flex flex-col">
-					<span className='leading-4'>{dateTimeFormatter(record.created_at, 'MM-DD-YYYY HH:MM:ss')}</span>
-					<span className='leading-4'>{dateTimeFormatter(record.updated_at, 'MM-DD-YYYY HH:MM:ss')}</span>
+					<span className="leading-4">{dateTimeFormatter(record.created_at, 'MM-DD-YYYY HH:MM:ss')}</span>
+					<span className="leading-4">{dateTimeFormatter(record.updated_at, 'MM-DD-YYYY HH:MM:ss')}</span>
 				</div>
 			)
 		},
@@ -106,13 +107,43 @@ const Users = () => {
 			width: 160,
 			render: (_, record) => (
 				<Space>
-					{/* {renderSwitch(record)} */}
+					{renderSwitch(record)}
 					{renderAddUsers('EDIT', record)}
-					{/* {renderDeleteBlogs(record)} */}
+					{renderDeleteUser(record)}
 				</Space>
 			)
 		}
 	]
+
+	const renderSwitch = (record: TUserItem) => {
+		return (
+			<Switch
+				unCheckedChildren="OFF"
+				checkedChildren="ON"
+				checked={record?.status === GLOBAL_STATUS.ON}
+				onChange={async () => {
+					const res = await toggleUser({ id: record?.id })
+
+					return afterModalformFinish(actionRef, res)
+				}}
+			/>
+		)
+	}
+
+	const renderDeleteUser = (record: TUserItem) => {
+		return (
+			<Popconfirm
+				title="Delete this User?"
+				onConfirm={async () => {
+					const res = await deleteUser({ id: record?.id })
+
+					return afterModalformFinish(actionRef, res)
+				}}
+			>
+				<Typography.Link type="danger">Delete</Typography.Link>
+			</Popconfirm>
+		)
+	}
 
 	const renderAddUsers = (type: 'ADD' | 'EDIT', record?: TUserItem) => {
 		const isEdit = type === 'EDIT'
@@ -149,18 +180,55 @@ const Users = () => {
 					label="First Name"
 					name="first_name"
 					rules={[{ required: true }]}
+					placeholder="eg: John"
+					fieldProps={{ maxLength: 15 }}
 				/>
-				<ProFormText colProps={{ span: 12 }} label="Last Name" name="last_name" rules={[{ required: true }]} />
-				<ProFormText colProps={{ span: 12 }} label="Phone" name="phone" rules={[{ required: true }]} />
-				<ProFormText colProps={{ span: 12 }} label="Email" name="email" rules={[{ required: true }]} />
-				<ProFormText colProps={{ span: 12 }} label="Username" name="username" rules={[{ required: true }]} />
+
+				<ProFormText
+					colProps={{ span: 12 }}
+					label="Email"
+					name="email"
+					rules={[{ required: true }]}
+					placeholder="eg: john.doe@gmail.com"
+				/>
+				<ProFormText
+					colProps={{ span: 12 }}
+					label="Last Name"
+					name="last_name"
+					rules={[{ required: true }]}
+					placeholder="eg: Doe"
+					fieldProps={{ maxLength: 15 }}
+				/>
+				<ProFormText
+					colProps={{ span: 12 }}
+					label="Username"
+					name="username"
+					rules={[{ required: true }]}
+					placeholder="eg: john.doe"
+				/>
+				<ProFormText
+					colProps={{ span: 12 }}
+					label="Phone"
+					name="phone"
+					rules={[{ required: true }]}
+					placeholder="eg: +639183431974"
+					fieldProps={{ maxLength: 15 }}
+				/>
 				<ProFormText.Password
 					colProps={{ span: 12 }}
 					label="Password"
 					name="password"
 					rules={[{ required: true }]}
+					placeholder="eg: ********"
+					fieldProps={{ maxLength: 15 }}
 				/>
-				<ProFormTextArea colProps={{ span: 12 }} label="Address" name="address" rules={[{ required: true }]} />
+				<ProFormTextArea
+					colProps={{ span: 12 }}
+					label="Address"
+					name="address"
+					rules={[{ required: true }]}
+					placeholder="eg: 26th Street, California U.S.A"
+				/>
 				<ProFormText colProps={{ span: 12 }} label="Image" rules={[{ required: true }]}>
 					<div>
 						{uploading ? (
@@ -215,6 +283,7 @@ const Users = () => {
 			<ProTable
 				{...PRO_TABLE_PROPS}
 				rowKey="id"
+				search={false}
 				columns={columns}
 				actionRef={actionRef}
 				request={fetchData}

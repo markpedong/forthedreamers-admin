@@ -29,6 +29,12 @@ export const addUser = params => post('/users/add', params)
 // /users/update
 export const updateUser = params => post('/users/update', params)
 
+// /users/delete
+export const deleteUser = params => post('/users/delete', params)
+
+// /users/toggle
+export const toggleUser = params => post('/users/toggle', params)
+
 // /products/get
 export const getProducts = params => post<TProductItem[]>('/products/get', params)
 

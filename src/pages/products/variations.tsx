@@ -1,7 +1,7 @@
 import { addVariations, deleteVariations, getVariations, toggleVariations, updateVariations } from '@/api'
 import { GLOBAL_STATUS } from '@/api/constants'
 import { TProductItem, TVariationItem } from '@/constants/response-type'
-import { dateTimeFormatter } from '@/utils'
+import { dateTimeFormatter, INPUT_NUMBER, INPUT_TRIM } from '@/utils'
 import { afterModalformFinish } from '@/utils/antd'
 import type { ActionType, ProColumns } from '@ant-design/pro-components'
 import { EditableProTable } from '@ant-design/pro-components'
@@ -18,8 +18,9 @@ const Variations: FC<{ product: TProductItem }> = ({ product }) => {
 			title: 'Size',
 			dataIndex: 'size',
 			align: 'center',
-			fieldProps: { placeholder: 'Enter Size' },
+			fieldProps: { placeholder: 'Enter Size', maxLength: 10 },
 			formItemProps: () => ({
+				...INPUT_TRIM,
 				rules: [{ required: true, message: 'Size is Required' }]
 			})
 		},
@@ -27,8 +28,9 @@ const Variations: FC<{ product: TProductItem }> = ({ product }) => {
 			title: 'Color',
 			dataIndex: 'color',
 			align: 'center',
-			fieldProps: { placeholder: 'Enter Color' },
+			fieldProps: { placeholder: 'Enter Color', maxLength: 10 },
 			formItemProps: () => ({
+				...INPUT_TRIM,
 				rules: [{ required: true, message: 'Color is Required' }]
 			})
 		},
@@ -36,8 +38,9 @@ const Variations: FC<{ product: TProductItem }> = ({ product }) => {
 			title: 'Price',
 			dataIndex: 'price',
 			align: 'center',
-			fieldProps: { placeholder: 'Enter Price' },
+			fieldProps: { placeholder: 'Enter Price', maxLength: 5 },
 			formItemProps: () => ({
+				...INPUT_NUMBER,
 				rules: [{ required: true, message: 'Price is Required' }]
 			})
 		},
@@ -45,8 +48,9 @@ const Variations: FC<{ product: TProductItem }> = ({ product }) => {
 			title: 'Quantity',
 			dataIndex: 'quantity',
 			align: 'center',
-			fieldProps: { placeholder: 'Enter Quantity' },
+			fieldProps: { placeholder: 'Enter Quantity', maxLength: 5 },
 			formItemProps: () => ({
+				...INPUT_NUMBER,
 				rules: [{ required: true, message: 'Quantity is Required' }]
 			})
 		},
@@ -61,8 +65,8 @@ const Variations: FC<{ product: TProductItem }> = ({ product }) => {
 			align: 'center',
 			render: (_, record) => (
 				<div className="flex flex-col">
-					<div>{dateTimeFormatter(record.created_at, 'MM-DD-YYYY HH:MM:ss')}</div>
-					<div>{dateTimeFormatter(record.updated_at, 'MM-DD-YYYY HH:MM:ss')}</div>
+					{record.created_at && <div>{dateTimeFormatter(record.created_at, 'MM-DD-YYYY HH:MM:ss')}</div>}
+					{record.updated_at && <div>{dateTimeFormatter(record.updated_at, 'MM-DD-YYYY HH:MM:ss')}</div>}
 				</div>
 			)
 		},

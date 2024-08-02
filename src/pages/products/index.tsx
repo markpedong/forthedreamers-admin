@@ -47,11 +47,7 @@ const Products = () => {
 			align: 'center',
 			search: false,
 			render: (_, record) => {
-				return (
-					<div className={styles.imgContainer}>
-						{record?.images.map(img => <Image src={img} key={img} />)}
-					</div>
-				)
+				return <div className={styles.imgContainer}>{record?.images.map(img => <Image src={img} key={img} />)}</div>
 			}
 		},
 		{
@@ -163,18 +159,24 @@ const Products = () => {
 				}}
 				onOpenChange={visible => !visible && setUploadedImages([])}
 			>
-				<ProFormText label="Name" name="name" rules={[{ required: true }]} colProps={{ span: 24 }} />
+				<ProFormText
+					label="Name"
+					name="name"
+					placeholder="Enter Product name"
+					fieldProps={{ maxLength: 30 }}
+					rules={[{ required: true }]}
+				/>
 				<ProFormTextArea
 					label="Description"
 					name="description"
 					rules={[{ required: true }]}
-					colProps={{ span: 24 }}
+					placeholder="Enter Description for the product"
 				/>
 				<ProFormSelect
 					label="CollectionID"
 					name="collection_id"
 					rules={[{ required: true }]}
-					colProps={{ span: 24 }}
+					allowClear={false}
 					request={getCollectionsData}
 				/>
 				<ProFormText label="Images" rules={[{ required: true }]}>
@@ -217,6 +219,7 @@ const Products = () => {
 			rowKey="id"
 			columns={columns}
 			actionRef={actionRef}
+			search={false}
 			request={fetchData}
 			toolBarRender={() => [renderAddEditProducts('ADD')]}
 			expandable={{
