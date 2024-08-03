@@ -1,4 +1,3 @@
-import { useRef, useState } from 'react'
 import { addProduct, getCollections, getProducts, toggleProducts, updateProduct, uploadImage } from '@/api'
 import { GLOBAL_STATUS } from '@/api/constants'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
@@ -9,6 +8,7 @@ import type { ProColumns } from '@ant-design/pro-components'
 import {
   ActionType,
   ModalForm,
+  ProFormList,
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
@@ -18,6 +18,7 @@ import {
 import { Button, Image, Space, Spin, Switch, Typography, UploadFile } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import { omit } from 'lodash'
+import { useRef, useState } from 'react'
 import { afterModalformFinish } from '@/utils/antd'
 import styles from './styles.module.scss'
 import Variations from './variations'
@@ -47,7 +48,13 @@ const Products = () => {
       align: 'center',
       search: false,
       render: (_, record) => {
-        return <div className={styles.imgContainer}>{record?.images.map(img => <Image src={img} key={img} />)}</div>
+        return (
+          <div className={styles.imgContainer}>
+            {record?.images.map(img => (
+              <Image src={img} key={img} />
+            ))}
+          </div>
+        )
       }
     },
     {
@@ -124,11 +131,13 @@ const Products = () => {
 
   const renderAddEditProducts = (type: 'ADD' | 'EDIT', record?: TProductItem) => {
     const isEdit = type === 'EDIT'
+    const transformedFeatures = isEdit && record?.features ? record.features.map(feature => ({ feature })) : []
+
     return (
       <ModalForm
         {...MODAL_FORM_PROPS}
-        labelCol={{ flex: '100px' }}
-        initialValues={isEdit ? record : {}}
+        labelCol={{ flex: '120px' }}
+        initialValues={isEdit ? { ...record, features: transformedFeatures } : {}}
         title={isEdit ? 'Edit Product' : 'Add Product'}
         grid
         trigger={
@@ -146,7 +155,10 @@ const Products = () => {
         }
         onFinish={async params => {
           let res
-          const payload = omit({ ...params, images: uploadedImages?.map(img => img?.url) }, ['upload'])
+          const payload = omit(
+            { ...params, images: uploadedImages?.map(img => img?.url), features: params.features?.map(item => item?.feature) },
+            ['upload']
+          )
 
           if (isEdit) {
             res = await updateProduct({ ...payload, id: record?.id })
@@ -164,13 +176,8 @@ const Products = () => {
           name='name'
           placeholder='Enter Product name'
           fieldProps={{ maxLength: 30 }}
+          colProps={{ span: 12 }}
           rules={[{ required: true }]}
-        />
-        <ProFormTextArea
-          label='Description'
-          name='description'
-          rules={[{ required: true }]}
-          placeholder='Enter Description for the product'
         />
         <ProFormSelect
           label='CollectionID'
@@ -178,7 +185,15 @@ const Products = () => {
           rules={[{ required: true }]}
           allowClear={false}
           request={getCollectionsData}
+          colProps={{ span: 12 }}
         />
+        <ProFormTextArea
+          label='Description'
+          name='description'
+          rules={[{ required: true }]}
+          placeholder='Enter Description for the product'
+        />
+
         <ProFormText label='Images' rules={[{ required: true }]}>
           <div className={styles.galleryContainer}>
             {uploading ? (
@@ -201,6 +216,18 @@ const Products = () => {
             )}
           </div>
         </ProFormText>
+        <ProFormList
+          name='features'
+          label='Product Features'
+          creatorButtonProps={{
+            creatorButtonText: 'Add feature text'
+          }}
+          min={1}
+          copyIconProps={false}
+          creatorRecord={{ feature: '' }}
+        >
+          <ProFormText name='feature' required />
+        </ProFormList>
       </ModalForm>
     )
   }

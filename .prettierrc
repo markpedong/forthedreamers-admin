@@ -8,7 +8,6 @@
   "singleAttributePerLine": false,
   "arrowParens": "avoid",
   "importOrder": [
-    "^next/(.*)$",
     "^react(.*)$",
     "<THIRD_PARTY_MODULES>",
     "^@/components/(.*)$",

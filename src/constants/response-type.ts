@@ -42,12 +42,13 @@ export type TVariationItem = {
 export type TProductItem = {
   id: string
   name: string
-  Description: string
+  description: string
   collection_id: string
   images: string[]
   created_at: number
   updated_at: number
   status: number
+  features: string[]
 }
 
 export type InitialState = {
