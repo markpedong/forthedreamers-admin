@@ -70,3 +70,15 @@ export type UserInfo = {
   created_at: number
   updated_at: number
 }
+
+export type TWebsiteInfo = {
+  created_at: number
+  id: string
+  landing_image1: string
+  landing_image2: string
+  landing_image3: string
+  marquee_text: string
+  promo_text: string
+  updated_at: number
+  website_name: string
+}

@@ -1,5 +1,5 @@
-import { post, upload } from '@/api/http'
-import { TCollectionItem, TLoginDetails, TProductItem, TUserItem, TVariationItem } from '@/constants/response-type'
+import { get, post, upload } from '@/api/http'
+import { TCollectionItem, TLoginDetails, TProductItem, TUserItem, TVariationItem, TWebsiteInfo } from '@/constants/response-type'
 import { TUploadImage } from '@/constants/types'
 
 // /public/login
@@ -61,3 +61,6 @@ export const deleteVariations = params => post('/variations/delete', params)
 
 // /variations/add
 export const addVariations = params => post('/variations/add', params)
+
+// /website/get
+export const getWebsiteData = params => get<TWebsiteInfo>('/website/get', params)

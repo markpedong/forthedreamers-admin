@@ -53,9 +53,9 @@ export const MODAL_FORM_PROPS: ModalFormProps = {
 }
 
 export const FORM_PROPS: ProFormProps = {
-  labelCol: { flex: '80px' },
+  labelCol: { flex: '110px' },
   layout: 'horizontal',
   wrapperCol: { flex: 1 },
   preserve: false,
-  size: 'middle'
+  size: 'small'
 }
