@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
 import { getWebsiteData, uploadImage } from '@/api'
 import { validateImg } from '@/constants/helper'
 import { TWebsiteInfo } from '@/constants/response-type'
-import { PlusOutlined } from '@ant-design/icons'
-import { ProForm, ProFormText, ProFormTextArea } from '@ant-design/pro-components'
+import { BeforeUpload } from '@/utils/antd'
+import { ProForm, ProFormText, ProFormTextArea, ProFormUploadButton } from '@ant-design/pro-components'
 import type { GetProp, UploadFile, UploadProps } from 'antd'
-import { FormInstance, Image, Spin, Upload } from 'antd'
+import { FormInstance, Image, Spin } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import { omit } from 'lodash'
-import { BeforeUpload } from '@/utils/antd'
+import { useEffect, useRef, useState } from 'react'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
@@ -23,7 +22,7 @@ const getBase64 = (file: FileType): Promise<string> =>
 const Website = () => {
   const formRef = useRef<FormInstance>()
   const [init, setInit] = useState<TWebsiteInfo>()
-  const [image1, setImage1] = useState('')
+  const [landingImage1, setLandingImage1] = useState<{ url: string }>({ url: '' })
   const [uploading, setUploading] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
@@ -37,15 +36,29 @@ const Website = () => {
     setPreviewOpen(true)
   }
 
-  const splitUrl = (url: string) => url?.split('/').pop()!
-
   const getFormData = async () => {
     const res = await getWebsiteData({})
 
     setInit(res?.data.data)
-    console.log(res?.data.data)
+    setLandingImage1({ url: res?.data.data.landing_image1 })
     formRef.current?.setFieldsValue(res?.data?.data)
   }
+
+  const handleCustomRequest = async (e: any) => {
+    const file = e.file as RcFile
+
+    if (validateImg(file) === '') return
+
+    setUploading(true)
+
+    try {
+      const res = await uploadImage(file)
+      setLandingImage1({ url: res.data.data.url })
+    } finally {
+      setUploading(false)
+    }
+  }
+
   useEffect(() => {
     getFormData()
   }, [])
@@ -57,70 +70,45 @@ const Website = () => {
         grid
         formRef={formRef}
         onFinish={async params => {
-          console.log(omit({ ...params, landing_image1: image1 || init?.landing_image1 }))
+          console.log(omit({ ...params, landing_image1: landingImage1 || init?.landing_image1 }))
         }}
       >
         <ProFormText label='Website Name' name='website_name' required colProps={{ span: 12 }} />
         <ProFormText label='Marquee Text' name='marquee_text' required colProps={{ span: 12 }} />
         <ProFormTextArea label='Promo Text' name='promo_text' required colProps={{ span: 24 }} />
-        <ProFormText label='Landing Image 1' colProps={{ span: 8 }}>
-          {!uploading ? (
-            <>
-              <Upload
-                listType='picture-card'
-                beforeUpload={BeforeUpload}
-                maxCount={1}
-                multiple={false}
-                fileList={
-                  image1 || init?.landing_image1
-                    ? [
-                        {
-                          uid: '-1',
-                          name: splitUrl(image1) || splitUrl(init?.landing_image1!),
-                          status: 'done',
-                          url: image1 || init?.landing_image1
-                        }
-                      ]
-                    : []
-                }
-                onPreview={handlePreview}
-                customRequest={async e => {
-                  const file = e.file as RcFile
-
-                  if (validateImg(file) === '') return
-                  setUploading(true)
-
-                  try {
-                    const res = await uploadImage(file)
-                    setImage1(res?.data.data.url)
-                  } finally {
-                    setUploading(false)
-                  }
-                }}
-                onRemove={() => {
-                  setImage1('')
-                  formRef?.current?.setFieldValue('landing_image1', '')
-                }}
-              >
-                <button style={{ border: 0, background: 'none' }} type='button'>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload Landing Image 1</div>
-                </button>
-              </Upload>
-              {previewImage && (
-                <Image
-                  wrapperStyle={{ display: 'none' }}
-                  preview={{
-                    visible: previewOpen,
-                    onVisibleChange: visible => setPreviewOpen(visible),
-                    afterOpenChange: visible => !visible && setPreviewImage('')
-                  }}
-                  src={previewImage}
-                />
-              )}
-            </>
-          ) : (
+        <ProFormText label='Landing Image 1' rules={[{ required: true }]}>
+          {uploading ? (
             <Spin />
+          ) : (
+            <ProFormUploadButton
+              name='upload'
+              title='UPLOAD YOUR IMAGE'
+              fieldProps={{
+                name: 'files',
+                onPreview: handlePreview,
+                beforeUpload: BeforeUpload,
+                listType: 'picture-card',
+                accept: 'image/*',
+                maxCount: 1,
+                multiple: false,
+                onRemove: () => {
+                  setLandingImage1({ url: '' })
+                },
+                fileList: landingImage1?.url ? ([{ ...landingImage1 }] as UploadFile<any>[]) : [],
+                customRequest: handleCustomRequest
+              }}
+            />
+          )}
+          {previewImage && (
+            <Image
+              wrapperStyle={{ display: 'none' }}
+              preview={{
+                visible: previewOpen,
+                onVisibleChange: visible => setPreviewOpen(visible),
+                afterOpenChange: visible => !visible && setPreviewImage('')
+              }}
+              src={previewImage}
+            />
           )}
         </ProFormText>
       </ProForm>
