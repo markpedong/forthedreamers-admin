@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { getWebsiteData, uploadImage } from '@/api'
+import { getWebsiteData, updateWebsiteData, uploadImage } from '@/api'
 import { validateImg } from '@/constants/helper'
 import { TWebsiteInfo } from '@/constants/response-type'
 import { ProForm, ProFormText, ProFormTextArea, ProFormUploadButton } from '@ant-design/pro-components'
@@ -7,7 +7,7 @@ import type { GetProp, UploadFile, UploadProps } from 'antd'
 import { FormInstance, Image, Spin } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import { omit } from 'lodash'
-import { BeforeUpload } from '@/utils/antd'
+import { BeforeUpload, afterModalformFinish } from '@/utils/antd'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
@@ -42,7 +42,7 @@ const Website = () => {
     return res?.data.data
   }
 
-  const handleCustomRequest = async (e: any) => {
+  const handleCustomRequest = async (e: any, type: '1' | '2' | '3') => {
     const file = e.file as RcFile
 
     if (validateImg(file) === '') return
@@ -52,10 +52,61 @@ const Website = () => {
     try {
       const res = await uploadImage(file)
 
-      setInit(prev => ({ ...prev, landing_image1: res?.data.data.url }))
+      setInit(prev => ({
+        ...prev,
+        ...(type === '1' && { landing_image1: res?.data.data?.url! }),
+        ...(type === '2' && { landing_image2: res?.data.data?.url! }),
+        ...(type === '3' && { landing_image3: res?.data.data?.url! })
+      }))
     } finally {
       setUploading(false)
     }
+  }
+
+  const renderImageContainer = (type: '1' | '2' | '3') => {
+    return (
+      <ProFormText label={`Landing Image ${type}`} rules={[{ required: true }]} colProps={{ span: 8 }}>
+        {uploading ? (
+          <Spin />
+        ) : (
+          <ProFormUploadButton
+            title='UPLOAD YOUR IMAGE'
+            fieldProps={{
+              name: 'files',
+              onPreview: handlePreview,
+              beforeUpload: BeforeUpload,
+              listType: 'picture-card',
+              accept: 'image/*',
+              maxCount: 1,
+              multiple: false,
+              onRemove: () =>
+                setInit(prev => ({
+                  ...prev,
+                  ...(type === '1' && { landing_image1: '' }),
+                  ...(type === '2' && { landing_image2: '' }),
+                  ...(type === '3' && { landing_image3: '' })
+                })),
+              fileList: (() => {
+                const url = init?.[`landing_image${type}`]
+                return url ? [{ url }] : []
+              })() as UploadFile<any>[],
+              customRequest: e => handleCustomRequest(e, type)
+            }}
+          />
+        )}
+        {previewImage && (
+          <Image
+            wrapperStyle={{ display: 'none' }}
+            preview={{
+              visible: previewOpen,
+              onVisibleChange: visible => setPreviewOpen(visible),
+              afterOpenChange: visible => !visible && setPreviewImage('')
+            }}
+            src={previewImage}
+          />
+        )}
+      </ProFormText>
+    )
   }
 
   return (
@@ -64,49 +115,28 @@ const Website = () => {
         layout='horizontal'
         grid
         request={getFormData}
+        onReset={getFormData}
         formRef={formRef}
         onFinish={async params => {
-          console.log(omit({ ...params, landing_image1: init?.landing_image1 }))
+          const payload = omit({
+            ...init,
+            ...params,
+            landing_image1: init?.landing_image1,
+            landing_image2: init?.landing_image2,
+            landing_image3: init?.landing_image3
+          })
+
+          const res = await updateWebsiteData(payload)
+
+          return afterModalformFinish(undefined, res, formRef)
         }}
       >
         <ProFormText label='Website Name' name='website_name' required colProps={{ span: 12 }} />
         <ProFormText label='Marquee Text' name='marquee_text' required colProps={{ span: 12 }} />
         <ProFormTextArea label='Promo Text' name='promo_text' required colProps={{ span: 24 }} />
-        <ProFormText label='Landing Image 1' rules={[{ required: true }]}>
-          {uploading ? (
-            <Spin />
-          ) : (
-            <ProFormUploadButton
-              name='upload'
-              title='UPLOAD YOUR IMAGE'
-              fieldProps={{
-                name: 'files',
-                onPreview: handlePreview,
-                beforeUpload: BeforeUpload,
-                listType: 'picture-card',
-                accept: 'image/*',
-                maxCount: 1,
-                multiple: false,
-                onRemove: () => {
-                  setInit(prev => ({ ...prev, landing_image1: '' }))
-                },
-                fileList: init?.landing_image1 ? ([{ url: init?.landing_image1 }] as UploadFile<any>[]) : [],
-                customRequest: handleCustomRequest
-              }}
-            />
-          )}
-          {previewImage && (
-            <Image
-              wrapperStyle={{ display: 'none' }}
-              preview={{
-                visible: previewOpen,
-                onVisibleChange: visible => setPreviewOpen(visible),
-                afterOpenChange: visible => !visible && setPreviewImage('')
-              }}
-              src={previewImage}
-            />
-          )}
-        </ProFormText>
+        {renderImageContainer('1')}
+        {renderImageContainer('2')}
+        {renderImageContainer('3')}
       </ProForm>
     </div>
   )

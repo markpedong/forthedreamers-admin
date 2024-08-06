@@ -64,3 +64,6 @@ export const addVariations = params => post('/variations/add', params)
 
 // /website/get
 export const getWebsiteData = params => get<TWebsiteInfo>('/website/get', params)
+
+// /website/update
+export const updateWebsiteData = params => post<TWebsiteInfo>('/website/update', params)
