@@ -70,7 +70,7 @@ const Website = () => {
             <ProFormUploadButton
               title='UPLOAD LANDING IMAGE 1'
               rules={[{ required: true }]}
-              colProps={{span: 24}}
+              colProps={{ span: 24 }}
               fieldProps={{
                 onPreview: handlePreview,
                 accept: 'image/*',
