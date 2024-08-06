@@ -1,12 +1,12 @@
-import { useRef, useState } from 'react'
 import { getWebsiteData, updateWebsiteData, uploadImage } from '@/api'
 import { validateImg } from '@/constants/helper'
-import { TWebsiteInfo } from '@/constants/response-type'
+import { TWebsiteInfo } from '@/constants/types'
 import { ProForm, ProFormText, ProFormTextArea, ProFormUploadButton } from '@ant-design/pro-components'
 import type { GetProp, UploadFile, UploadProps } from 'antd'
 import { FormInstance, Image, Spin } from 'antd'
 import { RcFile } from 'antd/lib/upload'
-import  omit  from 'lodash/omit'
+import omit from 'lodash/omit'
+import { useRef, useState } from 'react'
 import { BeforeUpload, afterModalformFinish } from '@/utils/antd'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
@@ -134,7 +134,8 @@ const Website = () => {
       >
         <ProFormText label='Website Name' name='website_name' required colProps={{ span: 12 }} />
         <ProFormText label='Marquee Text' name='marquee_text' required colProps={{ span: 12 }} />
-        <ProFormTextArea label='Promo Text' name='promo_text' required colProps={{ span: 24 }} />
+        <ProFormTextArea label='Promo Text' name='promo_text' required colProps={{ span: 12 }} />
+        <ProFormTextArea label='News Text' name='news_text' required colProps={{ span: 12 }} />
         {renderImageContainer('1')}
         {renderImageContainer('2')}
         {renderImageContainer('3')}
