@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
 import { getWebsiteData, uploadImage } from '@/api'
 import { validateImg } from '@/constants/helper'
 import { TWebsiteInfo } from '@/constants/response-type'
-import { PlusOutlined } from '@ant-design/icons'
+import { BeforeUpload } from '@/utils/antd'
 import { ProForm, ProFormText, ProFormTextArea, ProFormUploadButton } from '@ant-design/pro-components'
-import { FormInstance, Image, Spin, Upload } from 'antd'
 import type { GetProp, UploadFile, UploadProps } from 'antd'
+import { FormInstance, Image, Spin } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import { omit } from 'lodash'
-import { BeforeUpload } from '@/utils/antd'
+import { useEffect, useRef, useState } from 'react'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
@@ -24,8 +23,6 @@ const Website = () => {
   const formRef = useRef<FormInstance>()
   const [init, setInit] = useState<TWebsiteInfo>()
   const [image1, setImage1] = useState('')
-  const [image2, setImage2] = useState('')
-  const [image3, setImage3] = useState('')
   const [uploading, setUploading] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
