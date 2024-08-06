@@ -1,10 +1,14 @@
+import { useEffect, useRef, useState } from 'react'
 import { getWebsiteData, uploadImage } from '@/api'
+import { validateImg } from '@/constants/helper'
 import { TWebsiteInfo } from '@/constants/response-type'
 import { PlusOutlined } from '@ant-design/icons'
 import { ProForm, ProFormText, ProFormTextArea, ProFormUploadButton } from '@ant-design/pro-components'
-import { FormInstance, Image, Upload } from 'antd'
+import { FormInstance, Image, Spin, Upload } from 'antd'
 import type { GetProp, UploadFile, UploadProps } from 'antd'
-import { useEffect, useRef, useState } from 'react'
+import { RcFile } from 'antd/lib/upload'
+import { omit } from 'lodash'
+import { BeforeUpload } from '@/utils/antd'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
@@ -22,6 +26,7 @@ const Website = () => {
   const [image1, setImage1] = useState('')
   const [image2, setImage2] = useState('')
   const [image3, setImage3] = useState('')
+  const [uploading, setUploading] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
 
@@ -34,15 +39,7 @@ const Website = () => {
     setPreviewOpen(true)
   }
 
-  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => setImage1(newFileList[0]?.url!)
-
-  const uploadButton = (
-    <button style={{ border: 0, background: 'none' }} type='button'>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </button>
-  )
-  const splitUrl = (url: string) => url.split('/').pop()!
+  const splitUrl = (url: string) => url?.split('/').pop()!
 
   const getFormData = async () => {
     const res = await getWebsiteData({})
@@ -57,106 +54,176 @@ const Website = () => {
 
   return (
     <div>
-      <ProForm layout='horizontal' grid formRef={formRef}>
+      <ProForm
+        layout='horizontal'
+        grid
+        formRef={formRef}
+        onFinish={async params => {
+          console.log(omit({ ...params, landing_image1: image1 || init?.landing_image1 }))
+        }}
+      >
         <ProFormText label='Website Name' name='website_name' required colProps={{ span: 12 }} />
         <ProFormText label='Marquee Text' name='marquee_text' required colProps={{ span: 12 }} />
         <ProFormTextArea label='Promo Text' name='promo_text' required colProps={{ span: 24 }} />
-        <ProFormText label='Landing Image 1' required colProps={{ span: 8 }}>
-          <Upload
-            listType='picture-card'
-            fileList={[
-              {
-                uid: '-1',
-                name: 'image.png',
-                status: 'done',
-                url: init?.landing_image1
-              }
-            ]}
-            onPreview={handlePreview}
-            onChange={handleChange}
-          >
-            {uploadButton}
-          </Upload>
-          {previewImage && (
-            <Image
-              wrapperStyle={{ display: 'none' }}
-              preview={{
-                visible: previewOpen,
-                onVisibleChange: visible => setPreviewOpen(visible),
-                afterOpenChange: visible => !visible && setPreviewImage('')
+        <ProFormText label='Landing Image 1' colProps={{ span: 8 }}>
+          {!uploading ? (
+            <ProFormUploadButton
+              title='UPLOAD LANDING IMAGE 1'
+              rules={[{ required: true }]}
+              colProps={{span: 24}}
+              fieldProps={{
+                onPreview: handlePreview,
+                accept: 'image/*',
+                listType: 'picture-card',
+                beforeUpload: BeforeUpload,
+                fileList: [
+                  {
+                    uid: '-1',
+                    name: splitUrl(image1) || splitUrl(init?.landing_image1!),
+                    status: 'done',
+                    url: image1 || init?.landing_image1
+                  }
+                ],
+                multiple: false,
+                maxCount: 1,
+                customRequest: async e => {
+                  const file = e.file as RcFile
+
+                  if (validateImg(file) === '') return
+                  setUploading(true)
+
+                  try {
+                    const res = await uploadImage(file)
+                    setImage1(res?.data.data.url)
+                  } finally {
+                    setUploading(false)
+                  }
+                },
+                onRemove: () => setImage1('')
               }}
-              src={previewImage}
-            />
+            >
+              {previewImage && (
+                <Image
+                  wrapperStyle={{ display: 'none' }}
+                  preview={{
+                    visible: previewOpen,
+                    onVisibleChange: visible => setPreviewOpen(visible),
+                    afterOpenChange: visible => !visible && setPreviewImage('')
+                  }}
+                  src={previewImage}
+                />
+              )}
+            </ProFormUploadButton>
+          ) : (
+            <Spin />
           )}
         </ProFormText>
-        <ProFormUploadButton
-          label='Landing Image 2'
-          name='landing_image2'
-          title='UPLOAD LANDING IMAGE 2'
-          colProps={{ span: 8 }}
-          rules={[{ required: true }]}
-          fieldProps={{
-            accept: 'image/*',
-            listType: 'picture-card',
-            fileList: [
-              {
-                uid: '-1',
-                name: 'image.png',
-                status: 'done',
-                type: 'img'
-              }
-            ],
-            multiple: false,
-            maxCount: 1,
-            customRequest: async e => {
-              setImage2('')
+        <ProFormText label='Landing Image 1' colProps={{ span: 8 }}>
+          {!uploading ? (
+            <ProFormUploadButton
+              title='UPLOAD LANDING IMAGE 1'
+              rules={[{ required: true }]}
+              colProps={{span: 24}}
+              fieldProps={{
+                onPreview: handlePreview,
+                accept: 'image/*',
+                listType: 'picture-card',
+                beforeUpload: BeforeUpload,
+                fileList: [
+                  {
+                    uid: '-1',
+                    name: splitUrl(image1) || splitUrl(init?.landing_image1!),
+                    status: 'done',
+                    url: image1 || init?.landing_image1
+                  }
+                ],
+                multiple: false,
+                maxCount: 1,
+                customRequest: async e => {
+                  const file = e.file as RcFile
 
-              const res = await uploadImage(e?.file)
-              if (res.data.success) {
-                setImage2(res.data.data.url)
-              } else {
-                console.error('Failed to upload IMG or retrieve URL.')
-              }
-            },
-            onRemove: () => setImage2('')
-          }}
-        />
-        <ProFormUploadButton
-          label='Landing Image 3'
-          name='landing_image3'
-          title='UPLOAD LANDING IMAGE 3'
-          colProps={{ span: 8 }}
-          rules={[{ required: true }]}
-          fieldProps={{
-            accept: 'image/*',
-            listType: 'picture-card',
-            fileList:
-              image3 || init?.landing_image3
-                ? [
-                    {
-                      uid: '-1',
-                      name: splitUrl(image3) || splitUrl(init?.landing_image3!),
-                      status: 'done',
-                      url: image3,
-                      type: 'img'
-                    }
-                  ]
-                : [],
-            multiple: false,
-            maxCount: 1,
-            customRequest: async e => {
-              setImage3('')
+                  if (validateImg(file) === '') return
+                  setUploading(true)
 
-              const res = await uploadImage(e?.file)
-              if (res.data.success) {
-                setImage3(res.data.data.url)
-              } else {
-                console.error('Failed to upload IMG or retrieve URL.')
-              }
-            },
-            onRemove: () => setImage3('')
-          }}
-        />
+                  try {
+                    const res = await uploadImage(file)
+                    setImage1(res?.data.data.url)
+                  } finally {
+                    setUploading(false)
+                  }
+                },
+                onRemove: () => setImage1('')
+              }}
+            >
+              {previewImage && (
+                <Image
+                  wrapperStyle={{ display: 'none' }}
+                  preview={{
+                    visible: previewOpen,
+                    onVisibleChange: visible => setPreviewOpen(visible),
+                    afterOpenChange: visible => !visible && setPreviewImage('')
+                  }}
+                  src={previewImage}
+                />
+              )}
+            </ProFormUploadButton>
+          ) : (
+            <Spin />
+          )}
+        </ProFormText>
+        <ProFormText label='Landing Image 1' colProps={{ span: 8 }}>
+          {!uploading ? (
+            <ProFormUploadButton
+              title='UPLOAD LANDING IMAGE 1'
+              rules={[{ required: true }]}
+              colProps={{span: 24}}
+              fieldProps={{
+                onPreview: handlePreview,
+                accept: 'image/*',
+                listType: 'picture-card',
+                beforeUpload: BeforeUpload,
+                fileList: [
+                  {
+                    uid: '-1',
+                    name: splitUrl(image1) || splitUrl(init?.landing_image1!),
+                    status: 'done',
+                    url: image1 || init?.landing_image1
+                  }
+                ],
+                multiple: false,
+                maxCount: 1,
+                customRequest: async e => {
+                  const file = e.file as RcFile
+
+                  if (validateImg(file) === '') return
+                  setUploading(true)
+
+                  try {
+                    const res = await uploadImage(file)
+                    setImage1(res?.data.data.url)
+                  } finally {
+                    setUploading(false)
+                  }
+                },
+                onRemove: () => setImage1('')
+              }}
+            >
+              {previewImage && (
+                <Image
+                  wrapperStyle={{ display: 'none' }}
+                  preview={{
+                    visible: previewOpen,
+                    onVisibleChange: visible => setPreviewOpen(visible),
+                    afterOpenChange: visible => !visible && setPreviewImage('')
+                  }}
+                  src={previewImage}
+                />
+              )}
+            </ProFormUploadButton>
+          ) : (
+            <Spin />
+          )}
+        </ProFormText>
       </ProForm>
     </div>
   )

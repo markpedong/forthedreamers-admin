@@ -58,9 +58,9 @@ export const AntdConfigProvider = ({ children }: { children: React.ReactNode }) 
 }
 
 export const BeforeUpload = (file: FileType) => {
-  const isJpgOrPngOrSvg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/svg+xml'
+  const isJpgOrPngOrSvg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp'
   if (!isJpgOrPngOrSvg) {
-    message.error('You can only upload JPG/PNG/SVG file!')
+    message.error('You can only upload jpg/png/webp file!')
   }
   const isLt2M = file.size / 1024 / 1024 < 2
   if (!isLt2M) {
