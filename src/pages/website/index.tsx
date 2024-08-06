@@ -6,7 +6,7 @@ import { ProForm, ProFormText, ProFormTextArea, ProFormUploadButton } from '@ant
 import type { GetProp, UploadFile, UploadProps } from 'antd'
 import { FormInstance, Image, Spin } from 'antd'
 import { RcFile } from 'antd/lib/upload'
-import { omit } from 'lodash'
+import  omit  from 'lodash/omit'
 import { BeforeUpload, afterModalformFinish } from '@/utils/antd'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
@@ -128,6 +128,7 @@ const Website = () => {
 
           const res = await updateWebsiteData(payload)
 
+          getFormData()
           return afterModalformFinish(undefined, res, formRef)
         }}
       >
