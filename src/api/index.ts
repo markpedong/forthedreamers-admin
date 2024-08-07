@@ -20,6 +20,9 @@ export const updateCollection = params => post('/collections/update', params)
 // /collections/update
 export const deleteCollection = params => post('/collections/delete', params)
 
+// /collections/toggle
+export const toggleCollection = params => post('/collections/toggle', params)
+
 // /users/get
 export const getUsers = params => post<TUserItem[]>('/users/get', params)
 

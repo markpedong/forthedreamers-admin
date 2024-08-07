@@ -1,5 +1,7 @@
-import { addCollection, deleteCollection, getCollections, updateCollection, uploadImage } from '@/api'
+import { addCollection, deleteCollection, getCollections, toggleCollection, updateCollection, uploadImage } from '@/api'
+import { GLOBAL_STATUS } from '@/api/constants'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
+import { validateImg } from '@/constants/helper'
 import { TCollectionItem } from '@/constants/types'
 import { dateTimeFormatter } from '@/utils'
 import { afterModalformFinish } from '@/utils/antd'
@@ -11,12 +13,11 @@ import {
 	ProFormUploadButton,
 	ProTable
 } from '@ant-design/pro-components'
-import { Button, Image, Popconfirm, Space, Spin, Typography, UploadFile } from 'antd'
-import { useRef, useState } from 'react'
-import styles from './styles.module.scss'
+import { Button, Image, Popconfirm, Space, Spin, Switch, Typography, UploadFile } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import { omit } from 'lodash'
-import { validateImg } from '@/constants/helper'
+import { useRef, useState } from 'react'
+import styles from './styles.module.scss'
 
 const Collections = () => {
 	const [uploadedImages, setUploadedImages] = useState<{ url: string }[]>([])
@@ -60,13 +61,28 @@ const Collections = () => {
 			width: 160,
 			render: (_, record) => (
 				<Space>
-					{/* {renderSwitch(record)} */}
+					{renderSwitch(record)}
 					{renderAddEditCollections('EDIT', record)}
 					{renderDeleteCollections(record)}
 				</Space>
 			)
 		}
 	]
+
+	const renderSwitch = (record: TCollectionItem) => {
+		return (
+			<Switch
+			  unCheckedChildren='OFF'
+			  checkedChildren='ON'
+			  checked={record?.status === GLOBAL_STATUS.ON}
+			  onChange={async () => {
+				const res = await toggleCollection({ id: record?.id })
+	  
+				return afterModalformFinish(actionRef, res)
+			  }}
+			/>
+		  )
+	}
 
 	const handleCustomRequest = async (e: any) => {
 		const file = e.file as RcFile

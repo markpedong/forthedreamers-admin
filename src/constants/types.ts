@@ -10,6 +10,7 @@ export type TCollectionItem = {
   id: string
   name: string
   images: string[]
+  status: number
   created_at: number
   updated_at: number
 }
@@ -85,7 +86,6 @@ export type TWebsiteInfo = {
   website_name?: string
   news_text?: string
 }
-
 
 // /api/uploadImage
 export type TUploadImage = {
