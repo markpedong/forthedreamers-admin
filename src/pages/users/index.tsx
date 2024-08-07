@@ -3,7 +3,7 @@ import { addUser, deleteUser, getUsers, toggleUser, updateUser, uploadImage } fr
 import { GLOBAL_STATUS } from '@/api/constants'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
 import { validateImg } from '@/constants/helper'
-import { TUserItem } from '@/constants/response-type'
+import { TUserItem } from '@/constants/types'
 import { dateTimeFormatter } from '@/utils'
 import {
   ActionType,

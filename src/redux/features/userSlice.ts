@@ -1,4 +1,4 @@
-import { InitialState } from '@/constants/response-type'
+import { InitialState } from '@/constants/types'
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState: InitialState = {

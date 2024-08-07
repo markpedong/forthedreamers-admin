@@ -54,7 +54,7 @@ const Website = () => {
 
       setInit(prev => ({
         ...prev,
-        ...(type === '1' && { landing_image1: res?.data.data?.url! }),
+        ...(type === '1' && { landing_image1: res?.data.data?.url! }),  
         ...(type === '2' && { landing_image2: res?.data.data?.url! }),
         ...(type === '3' && { landing_image3: res?.data.data?.url! })
       }))

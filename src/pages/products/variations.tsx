@@ -1,7 +1,7 @@
 import React, { FC, useRef, useState } from 'react'
 import { addVariations, deleteVariations, getVariations, toggleVariations, updateVariations } from '@/api'
 import { GLOBAL_STATUS } from '@/api/constants'
-import { TProductItem, TVariationItem } from '@/constants/response-type'
+import { TProductItem, TVariationItem } from '@/constants/types'
 import { INPUT_NUMBER, INPUT_TRIM, dateTimeFormatter } from '@/utils'
 import type { ActionType, ProColumns } from '@ant-design/pro-components'
 import { EditableProTable } from '@ant-design/pro-components'

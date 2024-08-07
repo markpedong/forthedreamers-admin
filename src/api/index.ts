@@ -1,5 +1,5 @@
 import { get, post, upload } from '@/api/http'
-import { TCollectionItem, TLoginDetails, TProductItem, TUserItem, TVariationItem, TWebsiteInfo } from '@/constants/response-type'
+import { TCollectionItem, TLoginDetails, TProductItem, TUserItem, TVariationItem, TWebsiteInfo } from '@/constants/types'
 import { TUploadImage } from '@/constants/types'
 
 // /public/login

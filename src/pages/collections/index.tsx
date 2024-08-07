@@ -1,6 +1,6 @@
 import { addCollection, deleteCollection, getCollections, updateCollection, uploadImage } from '@/api'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
-import { TCollectionItem } from '@/constants/response-type'
+import { TCollectionItem } from '@/constants/types'
 import { dateTimeFormatter } from '@/utils'
 import { afterModalformFinish } from '@/utils/antd'
 import {

@@ -2,7 +2,7 @@ import { addProduct, getCollections, getProducts, toggleProducts, updateProduct,
 import { GLOBAL_STATUS } from '@/api/constants'
 import { MODAL_FORM_PROPS, PRO_TABLE_PROPS } from '@/constants'
 import { validateImg } from '@/constants/helper'
-import { TProductItem } from '@/constants/response-type'
+import { TProductItem } from '@/constants/types'
 import { dateTimeFormatter } from '@/utils'
 import type { ProColumns } from '@ant-design/pro-components'
 import {
