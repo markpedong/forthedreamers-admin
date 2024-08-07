@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react'
 import { getWebsiteData, updateWebsiteData, uploadImage } from '@/api'
 import { validateImg } from '@/constants/helper'
 import { TWebsiteInfo } from '@/constants/types'
@@ -6,7 +7,6 @@ import type { GetProp, UploadFile, UploadProps } from 'antd'
 import { FormInstance, Image, Spin } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import omit from 'lodash/omit'
-import { useRef, useState } from 'react'
 import { BeforeUpload, afterModalformFinish } from '@/utils/antd'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
@@ -54,7 +54,7 @@ const Website = () => {
 
       setInit(prev => ({
         ...prev,
-        ...(type === '1' && { landing_image1: res?.data.data?.url! }),  
+        ...(type === '1' && { landing_image1: res?.data.data?.url! }),
         ...(type === '2' && { landing_image2: res?.data.data?.url! }),
         ...(type === '3' && { landing_image3: res?.data.data?.url! })
       }))
@@ -121,6 +121,7 @@ const Website = () => {
           const payload = omit({
             ...init,
             ...params,
+            default_pageSize: +params.default_pageSize,
             landing_image1: init?.landing_image1,
             landing_image2: init?.landing_image2,
             landing_image3: init?.landing_image3
@@ -136,6 +137,7 @@ const Website = () => {
         <ProFormText label='Marquee Text' name='marquee_text' required colProps={{ span: 12 }} />
         <ProFormTextArea label='Promo Text' name='promo_text' required colProps={{ span: 12 }} />
         <ProFormTextArea label='News Text' name='news_text' required colProps={{ span: 12 }} />
+        <ProFormText label='Default Page Size' name='default_pageSize' required colProps={{ span: 12 }} />
         {renderImageContainer('1')}
         {renderImageContainer('2')}
         {renderImageContainer('3')}
