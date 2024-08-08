@@ -17,13 +17,14 @@
 }
 
 .imgContainer {
-
+    @apply grid grid-cols-4 h-full;
     :global {
         .ant-image {
             height: 4rem;
             width: 4rem;
 
             img {
+                @apply object-cover size-full;
                 border-radius: 0.3rem;
             }
         }

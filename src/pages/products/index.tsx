@@ -41,12 +41,15 @@ const Products = () => {
     {
       title: 'Description',
       align: 'center',
-      dataIndex: 'description'
+      dataIndex: 'description',
+      ellipsis: true,
+      width: 200,
     },
     {
       title: 'Images',
       align: 'center',
       search: false,
+      ellipsis: true,
       render: (_, record) => {
         return (
           <div className={styles.imgContainer}>
