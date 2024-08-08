@@ -28,11 +28,11 @@ const Products = () => {
   const [uploading, setUploading] = useState(false)
   const actionRef = useRef<ActionType>()
   const columns: ProColumns<TProductItem>[] = [
-    {
-      title: 'Collection',
-      align: 'center',
-      dataIndex: 'collection_id'
-    },
+    // {
+    //   title: 'Collection',
+    //   align: 'center',
+    //   dataIndex: 'collection_id'
+    // },
     {
       title: 'Name',
       align: 'center',
@@ -41,12 +41,15 @@ const Products = () => {
     {
       title: 'Description',
       align: 'center',
-      dataIndex: 'description'
+      dataIndex: 'description',
+      ellipsis: true,
+      width: 200,
     },
     {
       title: 'Images',
       align: 'center',
       search: false,
+      ellipsis: true,
       render: (_, record) => {
         return (
           <div className={styles.imgContainer}>

@@ -5,7 +5,7 @@
 }
 
 .imgContainer {
-    @apply flex gap-3;
+    @apply flex gap-3 justify-center;
 
     :global {
         .ant-image {
