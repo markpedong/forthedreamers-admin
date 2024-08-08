@@ -2,6 +2,13 @@
 
 .galleryContainer {
     @apply flex items-center justify-start;
+
+    :global {
+        .ant-upload-list{
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)) !important;
+        }
+    }
 }
 
 
