@@ -39,6 +39,7 @@ const Login = () => {
           if (res?.data.success) {
             setLocalStorage('token', res?.data.data.token)
             await dispatch(setUserInfo(res?.data?.data))
+            document.cookie = 'Auth=' + res?.data.data.token
             formRef?.current?.resetFields()
             navigate('/app/users')
           }
