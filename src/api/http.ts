@@ -41,7 +41,6 @@ const upload = async <T>(url: string, data): Promise<ApiResponse<{ data: T }>> =
 			'Content-Type': 'multipart/form-data',
 			"token": token,
 		},
-    withCredentials: true
 	})
 
   return response
@@ -52,16 +51,14 @@ const post = async <T>(url: string, data = {}): Promise<ApiResponse<{ data: T }>
     headers: {
       'Content-Type': 'application/json',
       token: getLocalStorage('token')
-    },
-    withCredentials: true
+    }
   })
 
 const get = async <T>(url: string, data = {}): Promise<ApiResponse<{ data: T }>> =>
   instance.get(`${import.meta.env.VITE_DOMAIN}${url}${stringify(data) ? '?' + stringify(data) : ''}`, {
     headers: {
       token: getLocalStorage('token')
-    },
-    withCredentials: true
+    }
   })
 
 export { post, get, upload }
