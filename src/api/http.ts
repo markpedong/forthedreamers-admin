@@ -40,7 +40,6 @@ const upload = async <T>(url: string, data): Promise<ApiResponse<{ data: T }>> =
 		headers: {
 			'Content-Type': 'multipart/form-data',
 			"token": token,
-      'Cookie': `Auth=${getLocalStorage('token')}`
 		},
     withCredentials: true
 	})
@@ -52,8 +51,7 @@ const post = async <T>(url: string, data = {}): Promise<ApiResponse<{ data: T }>
   instance.post(`${import.meta.env.VITE_DOMAIN}${url}`, data, {
     headers: {
       'Content-Type': 'application/json',
-      token: getLocalStorage('token'),
-      'Cookie': `Auth=${getLocalStorage('token')}`
+      token: getLocalStorage('token')
     },
     withCredentials: true
   })
@@ -61,8 +59,7 @@ const post = async <T>(url: string, data = {}): Promise<ApiResponse<{ data: T }>
 const get = async <T>(url: string, data = {}): Promise<ApiResponse<{ data: T }>> =>
   instance.get(`${import.meta.env.VITE_DOMAIN}${url}${stringify(data) ? '?' + stringify(data) : ''}`, {
     headers: {
-      token: getLocalStorage('token'),
-      'Cookie': `Auth=${getLocalStorage('token')}`
+      token: getLocalStorage('token')
     },
     withCredentials: true
   })
